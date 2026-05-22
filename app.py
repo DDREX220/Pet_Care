@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
@@ -6,8 +6,21 @@ app = Flask(__name__)
 def home():
     return "Hello, World! This is my first Flask website."
 
-@app.route("/register")
+@app.route("/register", methods=["GET", "POST"])
 def register():
+
+    if request.method == "POST":
+
+        name = request.form["name"]
+        email = request.form["email"]
+        password = request.form["password"]
+
+        return f"""
+        Name: {name}<br>
+        Email: {email}<br>
+        Password: {password}
+        """
+
     return render_template("register.html")
 
 @app.route("/login")

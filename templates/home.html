@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetCare</title>
+
+    <link rel="stylesheet"
+    href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+<body>
+
+    <!-- Navbar -->
+
+    <nav class="home-navbar">
+
+        <div class="home-logo">
+            PetCare
+        </div>
+
+        <ul class="home-links">
+
+            <li><a href="/">Home</a></li>
+            <li><a href="#">Services</a></li>
+            <li><a href="#">Lost & Found</a></li>
+            <li><a href="#">Community</a></li>
+            <li><a href="#">About</a></li>
+
+        </ul>
+
+        <div class="home-buttons">
+
+            <a href="/login" class="signin-btn">
+                Sign In
+            </a>
+
+            <a href="#" class="post-btn">
+                Post Ad
+            </a>
+
+        </div>
+
+    </nav>
+
+    <!-- Hero Section -->
+
+    <section class="hero-section">
+
+        <!-- Left Side -->
+
+        <div class="hero-left">
+
+            <h1>
+                Find Your Perfect <br>
+                Pet Companion
+            </h1>
+
+            <p>
+                Connect with loving pets, trusted services,
+                and a caring pet community all in one place.
+            </p>
+
+            <!-- Search Box -->
+
+            <div class="search-box">
+
+                <div class="search-tabs">
+
+                    <button>Adopt</button>
+                    <button>Lost & Found</button>
+                    <button>Services</button>
+
+                </div>
+
+                <div class="search-inputs">
+
+                    <input type="text"
+                    placeholder="Search pets">
+
+                    <input type="text"
+                    placeholder="Location">
+
+                    <button class="search-btn">
+                        Search
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Right Side -->
+
+        <div class="hero-right">
+
+            <img
+            src="https://images.unsplash.com/photo-1517849845537-4d257902454a?q=80&w=1200&auto=format&fit=crop"
+            alt="Pet Image">
+
+        </div>
+
+    </section>
+
+    <!-- Stats Section -->
+
+    <section class="stats-section">
+
+        <div class="stat-card">
+            <h2>10K+</h2>
+            <p>Happy Pets</p>
+        </div>
+
+        <div class="stat-card">
+            <h2>5K+</h2>
+            <p>Successful Adoptions</p>
+        </div>
+
+        <div class="stat-card">
+            <h2>500+</h2>
+            <p>Trusted Services</p>
+        </div>
+
+    </section>
+
+</body>
+</html>

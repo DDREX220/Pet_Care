@@ -1,19 +1,63 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Login</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | PetCare</title>
+
+    <link rel="stylesheet"
+    href="{{ url_for('static', filename='style.css') }}">
+
 </head>
 <body>
 
-<h1>Login Page</h1>
+    <div class="auth-container">
 
-<form>
-    <input type="email" placeholder="Email"><br><br>
+        <div class="auth-left">
 
-    <input type="password" placeholder="Password"><br><br>
+            <h1>Welcome Back!</h1>
 
-    <button type="submit">Login</button>
-</form>
+            <p>
+                Login to access your pets, appointments,
+                community posts, and pet care services.
+            </p>
+
+        </div>
+
+        <div class="auth-right">
+
+            <div class="form-box">
+
+                <h2>Login</h2>
+
+                <form method="POST">
+
+                    <input type="email"
+                    name="email"
+                    placeholder="Email Address"
+                    required>
+
+                    <input type="password"
+                    name="password"
+                    placeholder="Password"
+                    required>
+
+                    <button type="submit">
+                        Login
+                    </button>
+
+                </form>
+
+                <p class="bottom-text">
+                    Don't have an account?
+                    <a href="/register">Register</a>
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
 
 </body>
 </html>

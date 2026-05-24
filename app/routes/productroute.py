@@ -1,5 +1,5 @@
 from flask import Blueprint
-from app.controllers.productcontroller import ProductController
+from ..controllers.productcontroller import ProductController
 class ProductRoutes:
     def __init__(self):
         self.bp = Blueprint("product", __name__)

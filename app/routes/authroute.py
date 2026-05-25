@@ -1,5 +1,5 @@
 from flask import Blueprint
-from app.controllers.authcontroller import AuthController
+from ..controllers.authcontroller import AuthController
 class AuthRoutes:
     def __init__(self):
         self.bp = Blueprint("auth", __name__)

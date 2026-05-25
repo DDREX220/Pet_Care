@@ -1,25 +1,63 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | PetCare</title>
 
-{% block content %}
-<div class="card">
-    <h2>Login</h2>
-    <p class="subtitle">Submit your credentials to the backend route.</p>
+    <link rel="stylesheet"
+    href="{{ url_for('static', filename='style.css') }}">
 
-    <form method="post" action="{{ url_for('auth.login') }}">
-        <label>
-            Email
-            <input type="email" name="email" value="{{ email or '' }}" required>
-        </label>
+</head>
+<body>
 
-        <label>
-            Password
-            <input type="password" name="password" required>
-        </label>
+    <div class="auth-container">
 
-        <div class="actions">
-            <button type="submit">Login</button>
-            <a class="button-link" href="{{ url_for('auth.register') }}">Create account</a>
+        <div class="auth-left">
+
+            <h1>Welcome Back!</h1>
+
+            <p>
+                Login to access your pets, appointments,
+                community posts, and pet care services.
+            </p>
+
         </div>
-    </form>
-</div>
-{% endblock %}
+
+        <div class="auth-right">
+
+            <div class="form-box">
+
+                <h2>Login</h2>
+
+                <form method="POST">
+
+                    <input type="email"
+                    name="email"
+                    placeholder="Email Address"
+                    required>
+
+                    <input type="password"
+                    name="password"
+                    placeholder="Password"
+                    required>
+
+                    <button type="submit">
+                        Login
+                    </button>
+
+                </form>
+
+                <p class="bottom-text">
+                    Don't have an account?
+                    <a href="/register">Register</a>
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>

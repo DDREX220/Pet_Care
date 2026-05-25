@@ -1,28 +1,65 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | PetCare</title>
 
-{% block content %}
-<div class="hero">
-    <div class="card">
-        <h2>Dashboard</h2>
-        <p class="subtitle">Use the navigation or forms below to drive the backend routes.</p>
+    <link rel="stylesheet"
+    href="{{ url_for('static', filename='style.css') }}">
 
-        <div class="tiles">
-            <div class="tile">
-                <h3>Auth</h3>
-                <p>Login, register, profile, and password reset pages are wired to the controller layer.</p>
-                <a class="button-link" href="{{ url_for('auth.login') }}">Open login</a>
-            </div>
-            <div class="tile">
-                <h3>Products</h3>
-                <p>Add, search, and delete product requests now submit to backend endpoints.</p>
-                <a class="button-link" href="{{ url_for('product.add_product') }}">Open product form</a>
-            </div>
-            <div class="tile">
-                <h3>Status</h3>
-                <p>The app factory and blueprint registration now load through the package entrypoint.</p>
-                <a class="button-link" href="{{ url_for('home') }}">Refresh dashboard</a>
-            </div>
+</head>
+<body>
+
+    <nav class="dashboard-navbar">
+
+        <div class="logo">
+            PetCare
         </div>
+
+        <ul class="dashboard-links">
+            <li><a href="/">Home</a></li>
+            <li><a href="/profile">Profile</a></li>
+            <li><a href="/reset-password">Reset Password</a></li>
+            <li><a href="/login">Logout</a></li>
+        </ul>
+
+    </nav>
+
+    <div class="dashboard-container">
+
+        <h1>Welcome to PetCare Dashboard</h1>
+
+        <p class="dashboard-text">
+            Manage your pets, appointments,
+            adoption activities, and pet services.
+        </p>
+
+        <div class="card-container">
+
+            <div class="dashboard-card">
+                <h2>My Pets</h2>
+                <p>View and manage your pets.</p>
+            </div>
+
+            <div class="dashboard-card">
+                <h2>Appointments</h2>
+                <p>Track upcoming appointments.</p>
+            </div>
+
+            <div class="dashboard-card">
+                <h2>Community</h2>
+                <p>Connect with pet lovers.</p>
+            </div>
+
+            <div class="dashboard-card">
+                <h2>Services</h2>
+                <p>Explore pet care services.</p>
+            </div>
+
+        </div>
+
     </div>
-</div>
-{% endblock %}
+
+</body>
+</html>

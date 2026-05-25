@@ -1,25 +1,56 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile | PetCare</title>
 
-{% block content %}
-<div class="card">
-	<h2>Profile</h2>
-	<p class="subtitle">Update profile details through the auth controller.</p>
+    <link rel="stylesheet"
+    href="{{ url_for('static', filename='style.css') }}">
 
-	<form method="post" action="{{ url_for('auth.profile') }}">
-		<label>
-			Name
-			<input type="text" name="name" value="{{ name or '' }}" required>
-		</label>
+</head>
+<body>
 
-		<label>
-			Email
-			<input type="email" name="email" value="{{ email or '' }}" required>
-		</label>
+    <nav class="dashboard-navbar">
 
-		<div class="actions">
-			<button type="submit">Save profile</button>
-			<a class="button-link" href="{{ url_for('home') }}">Dashboard</a>
-		</div>
-	</form>
-</div>
-{% endblock %}
+        <div class="logo">
+            PetCare
+        </div>
+
+        <ul class="dashboard-links">
+            <li><a href="/">Home</a></li>
+            <li><a href="/dashboard">Dashboard</a></li>
+            <li><a href="/reset-password">Reset Password</a></li>
+            <li><a href="/login">Logout</a></li>
+        </ul>
+
+    </nav>
+
+    <div class="profile-wrapper">
+
+        <div class="profile-card">
+
+            <div class="profile-image">
+                👤
+            </div>
+
+            <h1>Sandeep</h1>
+
+            <p class="profile-email">
+                sandeep@gmail.com
+            </p>
+
+            <p class="profile-description">
+                Passionate pet lover and member of PetCare community.
+            </p>
+
+            <button class="profile-btn">
+                Edit Profile
+            </button>
+
+        </div>
+
+    </div>
+
+</body>
+</html>

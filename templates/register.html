@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2>Register</h2>
+    <p class="subtitle">Create an account through the backend route.</p>
+
+    <form method="post" action="{{ url_for('auth.register') }}">
+        <label>
+            Name
+            <input type="text" name="name" value="{{ name or '' }}" required>
+        </label>
+
+        <label>
+            Email
+            <input type="email" name="email" value="{{ email or '' }}" required>
+        </label>
+
+        <label>
+            Password
+            <input type="password" name="password" required>
+        </label>
+
+        <div class="actions">
+            <button type="submit">Register</button>
+            <a class="button-link" href="{{ url_for('auth.login') }}">Back to login</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

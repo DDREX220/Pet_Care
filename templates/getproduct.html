@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2>Get Product</h2>
+    <p class="subtitle">Look up a product using the backend route.</p>
+
+    {% if product %}
+    <div class="tile">
+        <h3>{{ product.name }}</h3>
+        <p>ID: {{ product.id }}</p>
+        <p>Category: {{ product.category }}</p>
+        <p>Price: {{ product.price }}</p>
+        <p>Quantity: {{ product.quantity }}</p>
+    </div>
+    {% endif %}
+
+    <form method="post" action="{{ url_for('product.get_product') }}">
+        <label>
+            Product ID
+            <input type="text" name="product_id" value="{{ product_id or '' }}" required>
+        </label>
+
+        <div class="actions">
+            <button type="submit">Fetch product</button>
+            <a class="button-link" href="{{ url_for('product.delete_product') }}">Delete product</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

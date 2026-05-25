@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="hero">
+    <div class="card">
+        <h2>Dashboard</h2>
+        <p class="subtitle">Use the navigation or forms below to drive the backend routes.</p>
+
+        <div class="tiles">
+            <div class="tile">
+                <h3>Auth</h3>
+                <p>Login, register, profile, and password reset pages are wired to the controller layer.</p>
+                <a class="button-link" href="{{ url_for('auth.login') }}">Open login</a>
+            </div>
+            <div class="tile">
+                <h3>Products</h3>
+                <p>Add, search, and delete product requests now submit to backend endpoints.</p>
+                <a class="button-link" href="{{ url_for('product.add_product') }}">Open product form</a>
+            </div>
+            <div class="tile">
+                <h3>Status</h3>
+                <p>The app factory and blueprint registration now load through the package entrypoint.</p>
+                <a class="button-link" href="{{ url_for('home') }}">Refresh dashboard</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2>Add Product</h2>
+    <p class="subtitle">Send product details into the backend handler.</p>
+
+    {% if product_id %}
+    <div class="flash">Saved product ID: {{ product_id }}</div>
+    {% endif %}
+
+    <form method="post" action="{{ url_for('product.add_product') }}">
+        <label>
+            Product Name
+            <input type="text" name="name" value="{{ name or '' }}" required>
+        </label>
+
+        <label>
+            Category
+            <input type="text" name="category" value="{{ category or '' }}" required>
+        </label>
+
+        <label>
+            Price
+            <input type="number" name="price" value="{{ price or '' }}" step="0.01" min="0" required>
+        </label>
+
+        <label>
+            Quantity
+            <input type="number" name="quantity" value="{{ quantity or '' }}" min="0" required>
+        </label>
+
+        <div class="actions">
+            <button type="submit">Add product</button>
+            <a class="button-link" href="{{ url_for('product.get_product') }}">Search products</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

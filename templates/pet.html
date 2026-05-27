@@ -1,0 +1,512 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .pets-page {
+        display: grid;
+        gap: 22px;
+    }
+
+    .pets-hero {
+        display: grid;
+        gap: 10px;
+        padding: 24px;
+        border-radius: 22px;
+        background: linear-gradient(135deg, rgba(47, 111, 109, 0.12), rgba(255, 255, 255, 0.9));
+        border: 1px solid var(--line);
+    }
+
+    .pets-hero h2 {
+        margin: 0;
+        font-size: 1.9rem;
+    }
+
+    .pets-hero p {
+        margin: 0;
+        color: var(--muted);
+        max-width: 62ch;
+    }
+
+    .pet-layout {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 18px;
+        align-items: start;
+    }
+
+    .panel {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        padding: 22px;
+        box-shadow: var(--shadow);
+    }
+
+    .panel-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 18px;
+        flex-wrap: wrap;
+    }
+
+    .panel-header h3,
+    .panel-header h4 {
+        margin: 0;
+    }
+
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border-radius: 999px;
+        padding: 8px 12px;
+        background: #eef7f6;
+        color: var(--accent-strong);
+        font-weight: 700;
+        font-size: 0.92rem;
+    }
+
+    .pet-form {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+        margin-bottom: 18px;
+    }
+
+    .pet-form .full {
+        grid-column: 1 / -1;
+    }
+
+    textarea {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 13px 14px;
+        font-size: 1rem;
+        font-family: inherit;
+        resize: vertical;
+        min-height: 110px;
+    }
+
+    textarea:focus {
+        outline: 2px solid rgba(47, 111, 109, 0.18);
+        border-color: var(--accent);
+    }
+
+    .pets-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 16px;
+    }
+
+    .pet-card {
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 18px;
+        background: linear-gradient(180deg, #fff, #fbf8f2);
+        display: grid;
+        gap: 12px;
+    }
+
+    .pet-card-header {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: start;
+    }
+
+    .pet-card h4 {
+        margin: 0;
+        font-size: 1.15rem;
+    }
+
+    .pet-meta {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+
+    .pet-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .tag {
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: #f3f7f4;
+        color: var(--accent-strong);
+        font-size: 0.85rem;
+        font-weight: 700;
+    }
+
+    .pet-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .ghost-button,
+    .danger-button,
+    .secondary-button {
+        border-radius: 999px;
+        padding: 10px 14px;
+        font-size: 0.92rem;
+        font-weight: 700;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .secondary-button {
+        background: var(--accent);
+        color: #fff;
+        border: 0;
+    }
+
+    .ghost-button {
+        background: #fff;
+        color: var(--accent-strong);
+        border: 1px solid var(--line);
+    }
+
+    .danger-button {
+        background: #fff4f4;
+        color: #b42318;
+        border: 1px solid #f4c7c3;
+    }
+
+    .note-list {
+        display: grid;
+        gap: 12px;
+    }
+
+    .note-item {
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 14px;
+        background: #fff;
+        display: grid;
+        gap: 6px;
+    }
+
+    .note-item strong {
+        display: block;
+    }
+
+    .note-item small {
+        color: var(--muted);
+    }
+
+    .empty-state {
+        padding: 24px;
+        border-radius: 18px;
+        border: 1px dashed var(--line);
+        color: var(--muted);
+        text-align: center;
+    }
+
+    @media (max-width: 860px) {
+        .pet-layout {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .pet-form {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<section class="pets-page">
+    <div class="pets-hero">
+        <span class="badge">Pet manager</span>
+        <h2>Manage each pet, edit details, and keep separate notes</h2>
+        <p>
+            Add pets to the list, update their details, remove entries when needed,
+            and track reminders or care notes for each animal in one place.
+        </p>
+    </div>
+
+    <div class="panel">
+        <div class="panel-header">
+            <div>
+                <h3>Add or update a pet</h3>
+                <p class="subtitle">Use this form to add a new pet or load one for editing.</p>
+            </div>
+            <span class="badge" id="pet-count-badge">0 pets saved</span>
+        </div>
+
+        <form class="pet-form" id="pet-form">
+            <input type="hidden" id="pet-id">
+            <label>
+                Pet name
+                <input type="text" id="pet-name" placeholder="Max" required>
+            </label>
+            <label>
+                Type
+                <input type="text" id="pet-type" placeholder="Dog" required>
+            </label>
+            <label>
+                Breed
+                <input type="text" id="pet-breed" placeholder="Golden Retriever">
+            </label>
+            <label>
+                Age
+                <input type="text" id="pet-age" placeholder="3 years">
+            </label>
+            <label class="full">
+                Notes
+                <textarea id="pet-notes" placeholder="Food schedule, health reminders, behavior notes..."></textarea>
+            </label>
+            <div class="actions full">
+                <button type="submit" class="secondary-button" id="save-pet-button">Save Pet</button>
+                <button type="button" class="ghost-button" id="reset-form-button">Clear Form</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="pet-layout">
+        <div class="panel">
+            <div class="panel-header">
+                <div>
+                    <h3>Your pets</h3>
+                    <p class="subtitle">Edit, delete, or open a pet note from the list below.</p>
+                </div>
+            </div>
+            <div class="pets-grid" id="pets-grid"></div>
+            <div class="empty-state" id="pets-empty" hidden>
+                No pets yet. Add the first one above.
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-header">
+                <div>
+                    <h4>Pet notes</h4>
+                    <p class="subtitle">Notes stay grouped by pet so you can track care separately.</p>
+                </div>
+            </div>
+            <div class="note-list" id="notes-list"></div>
+            <div class="empty-state" id="notes-empty" hidden>
+                Select a pet to see notes, or add a pet first.
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    const storageKey = "pet-care-pets";
+    const petForm = document.getElementById("pet-form");
+    const petIdInput = document.getElementById("pet-id");
+    const petNameInput = document.getElementById("pet-name");
+    const petTypeInput = document.getElementById("pet-type");
+    const petBreedInput = document.getElementById("pet-breed");
+    const petAgeInput = document.getElementById("pet-age");
+    const petNotesInput = document.getElementById("pet-notes");
+    const savePetButton = document.getElementById("save-pet-button");
+    const resetFormButton = document.getElementById("reset-form-button");
+    const petsGrid = document.getElementById("pets-grid");
+    const petsEmpty = document.getElementById("pets-empty");
+    const notesList = document.getElementById("notes-list");
+    const notesEmpty = document.getElementById("notes-empty");
+    const petCountBadge = document.getElementById("pet-count-badge");
+
+    const seedPets = [
+        {
+            id: crypto.randomUUID(),
+            name: "Max",
+            type: "Dog",
+            breed: "Golden Retriever",
+            age: "3 years",
+            notes: "Morning walk at 7 AM, brush coat twice a week, refill vitamins on Sunday."
+        },
+        {
+            id: crypto.randomUUID(),
+            name: "Luna",
+            type: "Cat",
+            breed: "Siamese",
+            age: "2 years",
+            notes: "Needs quiet space during evenings and wet food after medication."
+        }
+    ];
+
+    const loadPets = () => {
+        const saved = localStorage.getItem(storageKey);
+        if (saved) {
+            try {
+                return JSON.parse(saved);
+            } catch (error) {
+                console.error("Unable to parse saved pets", error);
+            }
+        }
+        localStorage.setItem(storageKey, JSON.stringify(seedPets));
+        return [...seedPets];
+    };
+
+    let pets = loadPets();
+    let selectedPetId = pets[0]?.id || null;
+
+    const savePets = () => {
+        localStorage.setItem(storageKey, JSON.stringify(pets));
+    };
+
+    const clearForm = () => {
+        petIdInput.value = "";
+        petForm.reset();
+        savePetButton.textContent = "Save Pet";
+    };
+
+    const renderPets = () => {
+        petsGrid.innerHTML = "";
+        petCountBadge.textContent = `${pets.length} pet${pets.length === 1 ? "" : "s"} saved`;
+        petsEmpty.hidden = pets.length !== 0;
+
+        pets.forEach((pet) => {
+            const card = document.createElement("article");
+            card.className = "pet-card";
+
+            card.innerHTML = `
+                <div class="pet-card-header">
+                    <div>
+                        <h4>${pet.name}</h4>
+                        <p class="pet-meta">${pet.type}${pet.breed ? " • " + pet.breed : ""}</p>
+                    </div>
+                    <span class="tag">${pet.age || "Age not set"}</span>
+                </div>
+                <p class="pet-meta">${pet.notes || "No notes added yet."}</p>
+                <div class="pet-tags">
+                    <span class="tag">Editable</span>
+                    <span class="tag">Notes ready</span>
+                </div>
+                <div class="pet-actions">
+                    <button type="button" class="ghost-button" data-action="select" data-id="${pet.id}">Open Notes</button>
+                    <button type="button" class="secondary-button" data-action="edit" data-id="${pet.id}">Edit</button>
+                    <button type="button" class="danger-button" data-action="delete" data-id="${pet.id}">Delete</button>
+                </div>
+            `;
+
+            petsGrid.appendChild(card);
+        });
+    };
+
+    const renderNotes = () => {
+        notesList.innerHTML = "";
+        const activePet = pets.find((pet) => pet.id === selectedPetId) || pets[0];
+
+        if (!activePet) {
+            notesEmpty.hidden = false;
+            return;
+        }
+
+        selectedPetId = activePet.id;
+        notesEmpty.hidden = true;
+
+        const notes = activePet.notes
+            ? activePet.notes.split(".").map((entry) => entry.trim()).filter(Boolean)
+            : [];
+
+        if (notes.length === 0) {
+            const noteCard = document.createElement("div");
+            noteCard.className = "note-item";
+            noteCard.innerHTML = `
+                <strong>${activePet.name}</strong>
+                <small>No structured notes yet.</small>
+                <p class="pet-meta">Use the edit form above to add food, medication, or training reminders.</p>
+            `;
+            notesList.appendChild(noteCard);
+            return;
+        }
+
+        notes.forEach((note, index) => {
+            const noteCard = document.createElement("div");
+            noteCard.className = "note-item";
+            noteCard.innerHTML = `
+                <strong>${activePet.name} note ${index + 1}</strong>
+                <p class="pet-meta">${note}</p>
+            `;
+            notesList.appendChild(noteCard);
+        });
+    };
+
+    petForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        const petId = petIdInput.value || crypto.randomUUID();
+        const updatedPet = {
+            id: petId,
+            name: petNameInput.value.trim(),
+            type: petTypeInput.value.trim(),
+            breed: petBreedInput.value.trim(),
+            age: petAgeInput.value.trim(),
+            notes: petNotesInput.value.trim()
+        };
+
+        const existingIndex = pets.findIndex((pet) => pet.id === petId);
+
+        if (existingIndex >= 0) {
+            pets[existingIndex] = updatedPet;
+        } else {
+            pets.unshift(updatedPet);
+        }
+
+        selectedPetId = petId;
+        savePets();
+        renderPets();
+        renderNotes();
+        clearForm();
+    });
+
+    resetFormButton.addEventListener("click", clearForm);
+
+    petsGrid.addEventListener("click", (event) => {
+        const button = event.target.closest("button[data-action]");
+        if (!button) {
+            return;
+        }
+
+        const petId = button.dataset.id;
+        const pet = pets.find((item) => item.id === petId);
+        if (!pet) {
+            return;
+        }
+
+        if (button.dataset.action === "select") {
+            selectedPetId = petId;
+            renderNotes();
+            return;
+        }
+
+        if (button.dataset.action === "edit") {
+            petIdInput.value = pet.id;
+            petNameInput.value = pet.name;
+            petTypeInput.value = pet.type;
+            petBreedInput.value = pet.breed || "";
+            petAgeInput.value = pet.age || "";
+            petNotesInput.value = pet.notes || "";
+            savePetButton.textContent = "Update Pet";
+            return;
+        }
+
+        if (button.dataset.action === "delete") {
+            pets = pets.filter((item) => item.id !== petId);
+            if (selectedPetId === petId) {
+                selectedPetId = pets[0]?.id || null;
+            }
+            savePets();
+            renderPets();
+            renderNotes();
+            clearForm();
+        }
+    });
+
+    renderPets();
+    renderNotes();
+</script>
+{% endblock %}

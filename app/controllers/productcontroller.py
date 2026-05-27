@@ -1,7 +1,7 @@
 from flask import flash, render_template, request
 from pymysql import MySQLError
 
-from app.database import connection_scope, ensure_schema
+from ..database import connection_scope, ensure_schema
 
 
 class ProductController:

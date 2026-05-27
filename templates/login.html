@@ -11,6 +11,8 @@
 </head>
 <body>
 
+    {% include "partials/navbar.html" %}
+
     <div class="auth-container">
 
         <div class="auth-left">
@@ -50,7 +52,7 @@
 
                 <p class="bottom-text">
                     Don't have an account?
-                    <a href="/register">Register</a>
+                    <a href="{{ url_for('auth.register') }}">Register</a>
                 </p>
 
             </div>

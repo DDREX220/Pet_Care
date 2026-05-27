@@ -11,20 +11,7 @@
 </head>
 <body>
 
-    <nav class="dashboard-navbar">
-
-        <div class="logo">
-            PetCare
-        </div>
-
-        <ul class="dashboard-links">
-            <li><a href="/">Home</a></li>
-            <li><a href="/profile">Profile</a></li>
-            <li><a href="/reset-password">Reset Password</a></li>
-            <li><a href="/login">Logout</a></li>
-        </ul>
-
-    </nav>
+    {% include "partials/navbar.html" %}
 
     <div class="dashboard-container">
 
@@ -40,6 +27,7 @@
             <div class="dashboard-card">
                 <h2>My Pets</h2>
                 <p>View and manage your pets.</p>
+                <a class="dashboard-button" href="{{ url_for('pet.pets') }}">Open Pets</a>
             </div>
 
             <div class="dashboard-card">

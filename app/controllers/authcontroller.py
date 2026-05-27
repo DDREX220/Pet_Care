@@ -1,7 +1,7 @@
 from flask import flash, redirect, render_template, request, url_for
 from pymysql import MySQLError
 
-from app.database import connection_scope, ensure_schema
+from ..database import connection_scope, ensure_schema
 from werkzeug.security import check_password_hash, generate_password_hash
 
 

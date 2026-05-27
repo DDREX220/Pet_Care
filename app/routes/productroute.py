@@ -7,12 +7,12 @@ class ProductRoutes:
 
     def register(self):
         self.bp.route("/getproduct", methods=["GET","POST"]) (
-            self.controller.login
+            self.controller.get_product
         )
         self.bp.route("/addproduct", methods=["GET","POST"])(
-            self.controller.register
+            self.controller.add_product
         )
         self.bp.route("/deleteproduct", methods=["GET","POST"])(
-            self.controller.register
+            self.controller.delete_product
         )
         return self.bp

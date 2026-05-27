@@ -1,0 +1,21 @@
+<header class="home-navbar">
+    <div class="home-navbar-top">
+        <div class="home-logo">Pet Care</div>
+
+        <div class="home-buttons">
+            <a class="signin-btn" href="{{ url_for('auth.login') }}">Login</a>
+            <a class="post-btn" href="{{ url_for('auth.register') }}">Register</a>
+        </div>
+    </div>
+
+    <nav class="home-links">
+        <a href="{{ url_for('home') }}">Home</a>
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('pet.pets') }}">Pets</a>
+        <a href="{{ url_for('auth.profile') }}">Profile</a>
+        <a href="{{ url_for('auth.reset_password') }}">Reset Password</a>
+        <a href="{{ url_for('product.add_product') }}">Add Product</a>
+        <a href="{{ url_for('product.get_product') }}">Get Product</a>
+        <a href="{{ url_for('product.delete_product') }}">Delete Product</a>
+    </nav>
+</header>

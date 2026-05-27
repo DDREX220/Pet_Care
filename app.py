@@ -43,6 +43,13 @@ def dashboard():
     return render_template("dashboard.html")
 
 
+# Pets Page
+
+@app.route("/pets")
+def pets():
+    return render_template("pet.html", title="Pets | Pet Care")
+
+
 # Profile Page
 
 @app.route("/profile")

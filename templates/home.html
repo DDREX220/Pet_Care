@@ -5,469 +5,442 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>PetCare</title>
 
-  <!-- GOOGLE FONT -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
-  <!-- FONT AWESOME -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
 
   <style>
-
-    *{
-      margin:0;
-      padding:0;
-      box-sizing:border-box;
-      font-family:'Poppins',sans-serif;
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
     }
 
-    body{
-      background:#E7A338;
-      overflow-x:hidden;
+    body {
+      background: #E7A338;
+      overflow-x: hidden;
+      color: #fff;
     }
 
-    /* ================= NAVBAR ================= */
-
-    nav{
-      width:100%;
-      height:80px;
-      background:#fff;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      padding:0 40px;
-      border-bottom:1px solid #ddd;
+    .home-nav {
+      width: 100%;
+      min-height: 80px;
+      background: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 40px;
+      border-bottom: 1px solid #edd08a;
+      color: #111;
     }
 
-    .left-nav{
-      display:flex;
-      align-items:center;
-      gap:45px;
+    .left-nav {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      min-width: 0;
     }
 
-    .logo{
-      display:flex;
-      align-items:center;
-      gap:10px;
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 22px;
+      color: #111;
+      white-space: nowrap;
     }
 
-    .logo img{
-      width:42px;
-      height:42px;
+    .logo-mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #f6cd72, #e7a338);
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-size: 18px;
+      flex: 0 0 auto;
     }
 
-    .logo h2{
-      font-size:22px;
-      font-weight:700;
-      color:#111;
+    .nav-links {
+      display: flex;
+      gap: 26px;
+      flex-wrap: wrap;
     }
 
-    .nav-links{
-      display:flex;
-      gap:35px;
+    .nav-links a {
+      text-decoration: none;
+      color: #111;
+      font-size: 16px;
+      font-weight: 500;
+      transition: 0.2s ease;
     }
 
-    .nav-links a{
-      text-decoration:none;
-      color:#111;
-      font-size:16px;
-      font-weight:500;
-      transition:0.3s;
+    .nav-links a:hover {
+      color: #b87400;
     }
 
-    .nav-links a:hover{
-      color:#E7A338;
+    .right-nav {
+      display: flex;
+      align-items: center;
+      gap: 16px;
     }
 
-    .right-nav{
-      display:flex;
-      align-items:center;
-      gap:18px;
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 140px;
+      height: 44px;
+      padding: 0 16px;
+      border-radius: 12px;
+      background: #f5f5f5;
+      color: #666;
+      font-size: 15px;
+      cursor: pointer;
     }
 
-    .search-box{
-      width:145px;
-      height:45px;
-      background:#F5F5F5;
-      border-radius:12px;
-      display:flex;
-      align-items:center;
-      gap:10px;
-      padding:0 18px;
-      color:#666;
-      cursor:pointer;
+    .sign-btn,
+    .post-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      height: 44px;
+      padding: 0 20px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 700;
+      transition: 0.2s ease;
+      white-space: nowrap;
     }
 
-    .search-box i{
-      font-size:14px;
+    .sign-btn {
+      border: 1.5px solid #e7a338;
+      background: #fff;
+      color: #e7a338;
     }
 
-    .search-box span{
-      font-size:15px;
-      font-weight:500;
+    .sign-btn:hover {
+      background: #fff7e3;
     }
 
-    .sign-btn{
-      height:46px;
-      padding:0 28px;
-      border:1.5px solid #E7A338;
-      border-radius:12px;
-      background:#fff;
-      color:#E7A338;
-      font-size:15px;
-      font-weight:600;
-      cursor:pointer;
-      transition:0.3s;
+    .post-btn {
+      border: none;
+      background: #e7a338;
+      color: #111;
     }
 
-    .sign-btn:hover{
-      background:#E7A338;
-      color:#fff;
+    .post-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
     }
 
-    .post-btn{
-      height:46px;
-      padding:0 26px;
-      border:none;
-      border-radius:12px;
-      background:#E7A338;
-      color:#111;
-      font-size:15px;
-      font-weight:700;
-      cursor:pointer;
-      transition:0.3s;
+    .hero {
+      width: 100%;
+      min-height: calc(100vh - 80px);
+      display: flex;
+      justify-content: space-between;
+      gap: 55px;
+      padding: 58px 40px 40px;
     }
 
-    .post-btn:hover{
-      transform:translateY(-2px);
+    .hero-left {
+      width: 50%;
+      padding-top: 18px;
     }
 
-    /* ================= HERO SECTION ================= */
-
-    .hero{
-      width:100%;
-      min-height:calc(100vh - 80px);
-      display:flex;
-      justify-content:space-between;
-      gap:55px;
-      padding:40px;
+    .hero-left h1 {
+      font-size: 56px;
+      line-height: 1.15;
+      color: #fff;
+      font-weight: 800;
+      margin-bottom: 28px;
+      max-width: 11ch;
     }
 
-    /* LEFT SIDE */
-
-    .hero-left{
-      width:50%;
-      padding-top:25px;
+    .hero-left p {
+      font-size: 22px;
+      line-height: 1.7;
+      color: #fff;
+      font-weight: 300;
+      margin-bottom: 36px;
+      max-width: 720px;
     }
 
-    .hero-left h1{
-      font-size:60px;
-      line-height:78px;
-      color:#fff;
-      font-weight:800;
-      margin-bottom:28px;
+    .search-card {
+      width: 100%;
+      background: #fff;
+      border-radius: 22px;
+      padding: 24px 24px 22px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
     }
 
-    .hero-left p{
-      font-size:22px;
-      line-height:42px;
-      color:#fff;
-      font-weight:300;
-      margin-bottom:35px;
-      max-width:760px;
+    .tabs {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
     }
 
-    /* SEARCH CARD */
-
-    .search-card{
-      width:100%;
-      background:#fff;
-      border-radius:22px;
-      padding:28px;
-      box-shadow:0 8px 20px rgba(0,0,0,0.15);
+    .tab {
+      font-size: 18px;
+      font-weight: 600;
+      color: #222;
+      padding: 12px 18px;
+      border-radius: 10px;
+      background: #f5f5f5;
     }
 
-    .tabs{
-      display:flex;
-      align-items:center;
-      gap:40px;
-      margin-bottom:25px;
+    .active-tab {
+      background: #f4bc53;
     }
 
-    .tab{
-      font-size:22px;
-      font-weight:600;
-      color:#111;
-      cursor:pointer;
+    .line {
+      width: 100%;
+      height: 1px;
+      background: #ddd;
+      margin-bottom: 18px;
     }
 
-    .active-tab{
-      background:#E7A338;
-      padding:12px 24px;
-      border-radius:12px;
+    .inputs {
+      display: flex;
+      gap: 18px;
+      margin-bottom: 18px;
     }
 
-    .line{
-      width:100%;
-      height:1px;
-      background:#ddd;
-      margin-bottom:25px;
+    .input-box {
+      flex: 1;
+      min-width: 0;
+      height: 48px;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      background: #fafafa;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 18px;
+      color: #777;
+      font-size: 16px;
     }
 
-    .inputs{
-      display:flex;
-      gap:20px;
-      margin-bottom:20px;
+    .input-box i {
+      font-size: 16px;
     }
 
-    .input-box{
-      flex:1;
-      height:72px;
-      border:1px solid #ddd;
-      border-radius:14px;
-      background:#fafafa;
-      display:flex;
-      align-items:center;
-      gap:15px;
-      padding:0 22px;
-      color:#777;
-      font-size:18px;
+    .search-btn {
+      width: 100%;
+      height: 46px;
+      border: none;
+      border-radius: 12px;
+      background: #f4bc53;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s ease;
     }
 
-    .input-box i{
-      font-size:18px;
+    .search-btn:hover {
+      opacity: 0.92;
     }
 
-    .search-btn{
-      width:100%;
-      height:65px;
-      border:none;
-      border-radius:14px;
-      background:#E7A338;
-      font-size:22px;
-      font-weight:700;
-      cursor:pointer;
-      transition:0.3s;
+    .stats {
+      display: flex;
+      gap: 60px;
+      margin-top: 42px;
     }
 
-    .search-btn:hover{
-      opacity:0.9;
+    .stat h2 {
+      color: #fff;
+      font-size: 48px;
+      font-weight: 800;
+      line-height: 1;
     }
 
-    /* STATS */
-
-    .stats{
-      display:flex;
-      gap:60px;
-      margin-top:45px;
+    .stat p {
+      color: #fff;
+      font-size: 20px;
+      font-weight: 300;
+      margin-top: 6px;
     }
 
-    .stat h2{
-      color:#fff;
-      font-size:50px;
-      font-weight:800;
+    .hero-right {
+      width: 50%;
+      position: relative;
+      display: flex;
+      justify-content: flex-end;
     }
 
-    .stat p{
-      color:#fff;
-      font-size:22px;
-      font-weight:300;
-      margin-top:5px;
+    .hero-right img {
+      width: 100%;
+      height: 500px;
+      object-fit: cover;
+      border-radius: 28px;
+      box-shadow: 0 18px 30px rgba(0, 0, 0, 0.15);
     }
 
-    /* RIGHT SIDE */
-
-    .hero-right{
-      width:50%;
-      position:relative;
+    .floating-card {
+      position: absolute;
+      left: 20px;
+      bottom: -28px;
+      width: 230px;
+      background: #fff;
+      border-radius: 18px;
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.15);
     }
 
-    .hero-right img{
-      width:100%;
-      height:620px;
-      object-fit:cover;
-      border-radius:28px;
+    .icon-circle {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background: #4fc25a;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      font-size: 22px;
+      flex: 0 0 auto;
     }
 
-    /* FLOATING CARD */
-
-    .floating-card{
-      position:absolute;
-      left:-35px;
-      bottom:-28px;
-      width:300px;
-      background:#fff;
-      border-radius:22px;
-      padding:24px;
-      display:flex;
-      align-items:center;
-      gap:18px;
-      box-shadow:0 8px 20px rgba(0,0,0,0.18);
+    .floating-card h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #111;
+      margin-bottom: 2px;
     }
 
-    .icon-circle{
-      width:75px;
-      height:75px;
-      border-radius:50%;
-      background:#4FC25A;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      color:#fff;
-      font-size:30px;
+    .floating-card p {
+      font-size: 14px;
+      color: #666;
     }
 
-    .floating-card h3{
-      font-size:28px;
-      font-weight:700;
-      color:#111;
-      margin-bottom:5px;
-    }
+    @media (max-width: 1200px) {
+      .home-nav {
+        padding: 0 20px;
+      }
 
-    .floating-card p{
-      font-size:18px;
-      color:#666;
-    }
+      .nav-links {
+        display: none;
+      }
 
-    /* ================= RESPONSIVE ================= */
-
-    @media(max-width:1200px){
-
-      .hero{
-        flex-direction:column;
+      .hero {
+        flex-direction: column;
       }
 
       .hero-left,
-      .hero-right{
-        width:100%;
+      .hero-right {
+        width: 100%;
       }
 
-      .hero-left h1{
-        font-size:45px;
-        line-height:60px;
+      .hero-left h1 {
+        font-size: 46px;
       }
 
-      .hero-left p{
-        font-size:18px;
-        line-height:32px;
+      .hero-left p {
+        font-size: 18px;
       }
 
-      .hero-right img{
-        height:auto;
+      .hero-right img {
+        height: auto;
       }
-
-      .floating-card{
-        left:20px;
-        bottom:20px;
-      }
-
     }
 
-    @media(max-width:768px){
-
-      nav{
-        padding:0 20px;
+    @media (max-width: 768px) {
+      .right-nav {
+        gap: 10px;
       }
 
-      .nav-links{
-        display:none;
+      .search-box {
+        min-width: 42px;
+        justify-content: center;
+        padding: 0 12px;
       }
 
-      .hero{
-        padding:20px;
+      .search-box span {
+        display: none;
       }
 
-      .hero-left h1{
-        font-size:36px;
-        line-height:50px;
+      .sign-btn,
+      .post-btn {
+        padding: 0 14px;
       }
 
-      .hero-left p{
-        font-size:16px;
-        line-height:28px;
+      .hero {
+        padding: 26px 20px 36px;
       }
 
-      .inputs{
-        flex-direction:column;
+      .hero-left h1 {
+        font-size: 36px;
+        max-width: none;
       }
 
-      .stats{
-        flex-direction:column;
-        gap:20px;
+      .hero-left p {
+        font-size: 16px;
+        line-height: 1.65;
       }
 
-      .floating-card{
-        width:250px;
+      .inputs,
+      .stats {
+        flex-direction: column;
       }
 
+      .floating-card {
+        width: 210px;
+        left: 14px;
+        bottom: 14px;
+      }
     }
-
   </style>
 </head>
 
 <body>
 
-  <!-- ================= NAVBAR ================= -->
-
-  <nav>
-
+  <nav class="home-nav">
     <div class="left-nav">
-
       <div class="logo">
-        <img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" alt="">
-        <h2>PetCare</h2>
+        <div class="logo-mark">🐾</div>
+        <span>PetCare</span>
       </div>
 
       <div class="nav-links">
-        <a href="#">Home</a>
-        <a href="#">Services</a>
-        <a href="#">Lost & Found</a>
-        <a href="#">Community</a>
-        <a href="#">Pet Care Tips</a>
+        <a href="{{ url_for('home') }}">Home</a>
+        <a href="{{ url_for('auth.profile') }}">profile</a>
+        <a href="{{ url_for('pet.pets') }}">Lost & Found</a>
+        <a href="{{ url_for('dashboard') }}">Community</a>
+        <a href="{{ url_for('dashboard') }}">Dashboard </a>
       </div>
-
     </div>
 
     <div class="right-nav">
-
       <div class="search-box">
         <i class="fa-solid fa-magnifying-glass"></i>
         <span>Search</span>
       </div>
 
-      <button class="sign-btn">
+      <a class="sign-btn" href="{{ url_for('auth.login') }}">
         <i class="fa-regular fa-user"></i>
-        Sign In
-      </button>
+        <span>Sign In</span>
+      </a>
 
-      <button class="post-btn">
-        Post Ad
-      </button>
-
+      <a class="post-btn" href="{{ url_for('pet.pets') }}">Post Ad</a>
     </div>
-
   </nav>
 
-  <!-- ================= HERO SECTION ================= -->
-
   <section class="hero">
-
-    <!-- LEFT SIDE -->
-
     <div class="hero-left">
-
-      <h1>
-        Find Your Perfect Pet Companion
-      </h1>
-
-      <p>
-        Connect with pet lovers, find lost pets, adopt new friends, and access trusted pet care services all in one place.
-      </p>
-
-      <!-- SEARCH CARD -->
+      <h1>Find Your Perfect Pet Companion</h1>
+      <p>Connect with pet lovers, find lost pets, adopt new friends, and access trusted pet care services all in one place.</p>
 
       <div class="search-card">
-
         <div class="tabs">
           <div class="tab active-tab">Adopt</div>
           <div class="tab">Lost & Found</div>
@@ -477,7 +450,6 @@
         <div class="line"></div>
 
         <div class="inputs">
-
           <div class="input-box">
             <i class="fa-solid fa-magnifying-glass"></i>
             <span>Search for pets...</span>
@@ -487,19 +459,12 @@
             <i class="fa-solid fa-location-dot"></i>
             <span>Location</span>
           </div>
-
         </div>
 
-        <button class="search-btn">
-          Search Now
-        </button>
-
+        <button class="search-btn" type="button">Search Now</button>
       </div>
 
-      <!-- STATS -->
-
       <div class="stats">
-
         <div class="stat">
           <h2>10K+</h2>
           <p>Happy Pets</p>
@@ -514,22 +479,13 @@
           <h2>500+</h2>
           <p>Services</p>
         </div>
-
       </div>
-
     </div>
 
-    <!-- RIGHT SIDE -->
-
     <div class="hero-right">
-
-      <!-- YOUR IMAGE -->
-      <img src="image.png" alt="Pet Image">
-
-      <!-- FLOATING CARD -->
+      <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1200&q=80" alt="Pet Image">
 
       <div class="floating-card">
-
         <div class="icon-circle">
           <i class="fa-solid fa-dog"></i>
         </div>
@@ -538,11 +494,8 @@
           <h3>Max found!</h3>
           <p>Reunited today</p>
         </div>
-
       </div>
-
     </div>
-
   </section>
 
 </body>

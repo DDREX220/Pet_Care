@@ -14,11 +14,17 @@ def create_app():
     # Register blueprints
     from app.routes.authroute import AuthRoutes
     from app.routes.pet_routes import PetRoutes
+    from app.routes.vaccination_routes import VaccinationRoutes
+    from app.routes.medical_routes import MedicalRoutes
 
     auth_routes = AuthRoutes()
     pet_routes = PetRoutes()
+    vaccination_routes = VaccinationRoutes()
+    medical_routes = MedicalRoutes()
     app.register_blueprint(auth_routes.register())
     app.register_blueprint(pet_routes.register())
+    app.register_blueprint(vaccination_routes.register())
+    app.register_blueprint(medical_routes.register())
 
     # Error handlers
     @app.errorhandler(404)

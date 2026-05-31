@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PetCare Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="dashboard-page">
+  <header class="topbar">
+    <div class="topbar-inner container">
+      <div class="logo-wrap">
+        <div class="logo-mark">PetC</div>
+        <div class="logo-text">PetCare</div>
+      </div>
+      <nav class="main-nav" aria-label="Primary">
+        <a href="/">Home</a>
+        <a href="/services">Services</a>
+        <a href="/lost-found">Lost &amp; Found</a>
+        <a href="/community">Community</a>
+        <a href="/pet-care-tips">Pet Care Tips</a>
+        <a href="/dashboard" class="is-current">Dashboard</a>
+        <a href="/my-note">My Note</a>
+      </nav>
+      <div class="topbar-actions">
+        <button class="search-pill" type="button">&#128269; Search</button>
+        {% if session.get('user_name') %}
+          <span class="user-chip">Hi, {{ session.get('user_name') }}</span>
+          <a class="btn btn-outline" href="/my-note">My Note</a>
+        {% else %}
+          <a class="btn btn-outline" href="/login">&#128100; Sign In</a>
+        {% endif %}
+      </div>
+    </div>
+  </header>
+
+  <main class="container dashboard-main">
+    <h1>Dashboard</h1>
+    <p>Welcome{% if session.get('user_name') %}, {{ session.get('user_name') }}{% endif %} — manage your profile below.</p>
+
+    <section class="dashboard-cards">
+      <div class="card profile-summary">
+        <div class="summary-inner">
+          <div class="summary-photo">
+            {% if user and user['photo'] %}
+              <img src="{{ url_for('static', filename=user['photo']) }}" alt="Profile photo">
+            {% else %}
+              <div class="photo-placeholder">No Photo</div>
+            {% endif %}
+          </div>
+          <div class="summary-info">
+            <h3>{{ user['name'] if user else 'Your name' }}</h3>
+            <p class="muted">{{ user['email'] if user else 'you@example.com' }}</p>
+            <p class="muted">{{ user['address'] if user and user['address'] else 'No address provided' }}</p>
+            <div class="summary-actions">
+              <button class="btn" id="editProfileBtn" type="button">Edit Profile</button>
+              <form method="post" onsubmit="return confirm('Are you sure you want to delete your profile? This action cannot be undone.');" style="display:inline-block;margin-left:8px;">
+                <input type="hidden" name="action" value="delete">
+                <button class="delete-btn" type="submit">Delete</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card profile-card hidden">
+        <form method="post" enctype="multipart/form-data">
+          <div class="profile-grid">
+            <div class="profile-photo">
+              {% if user and user['photo'] %}
+                <img src="{{ url_for('static', filename=user['photo']) }}" alt="Profile photo">
+              {% else %}
+                <div class="photo-placeholder">No Photo</div>
+              {% endif %}
+              <label class="file-label">Change photo
+                <input type="file" name="photo" accept="image/*">
+              </label>
+            </div>
+
+            <div class="profile-fields">
+              <label>
+                <span>Name</span>
+                <input type="text" name="name" value="{{ user['name'] if user else '' }}">
+              </label>
+
+              <label>
+                <span>Email</span>
+                <input type="email" name="email" value="{{ user['email'] if user else '' }}">
+              </label>
+
+              <label>
+                <span>Address</span>
+                <input type="text" name="address" value="{{ user['address'] if user and user['address'] else '' }}">
+              </label>
+
+              <div class="form-actions">
+                <button class="btn" type="submit">Save Profile</button>
+                </div>
+              
+              <div class="form-actions">
+                <form method="post" onsubmit="return confirm('Are you sure you want to delete your profile? This action cannot be undone.');">
+                  <input type="hidden" name="action" value="delete">
+                  <button class="delete-btn" type="submit">Delete Profile</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </section>
+  </main>
+  <script>
+    document.addEventListener('DOMContentLoaded', function(){
+      var editBtn = document.getElementById('editProfileBtn');
+      if(editBtn){
+        editBtn.addEventListener('click', function(){
+          var summary = document.querySelector('.profile-summary');
+          var formCard = document.querySelector('.profile-card');
+          if(summary) summary.classList.add('hidden');
+          if(formCard) formCard.classList.remove('hidden');
+          // focus first input
+          var first = document.querySelector('.profile-card input[name="name"]');
+          if(first) first.focus();
+        });
+      }
+    });
+  </script>
+</body>
+</html>

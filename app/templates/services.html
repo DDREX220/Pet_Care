@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PetCare Services</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="services-page">
+  <header class="topbar">
+    <div class="topbar-inner container">
+      <div class="logo-wrap">
+        <div class="logo-mark">PetC</div>
+        <div class="logo-text">PetCare</div>
+      </div>
+      <nav class="main-nav" aria-label="Primary">
+        <a href="/">Home</a>
+        <a href="/services" class="is-current">Services</a>
+        <a href="/lost-found">Lost &amp; Found</a>
+        <a href="/community">Community</a>
+        <a href="/pet-care-tips">Pet Care Tips</a>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/my-note">My Note</a>
+      </nav>
+      <div class="topbar-actions">
+        <button class="search-pill" type="button">&#128269; Search</button>
+        <a class="btn btn-outline" href="/login">&#128100; Sign In</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="services-page-main">
+    <section class="services-hero container">
+      <h1>Our Pet Care Services</h1>
+      <p>
+        Everything your pet needs, all in one place. Browse our comprehensive range of professional pet care services.
+      </p>
+    </section>
+
+    <section class="container services-grid" aria-label="Pet care services">
+      <article class="service-card">
+        <div class="service-icon icon-blue">&#128657;</div>
+        <h2>Veterinary Care</h2>
+        <p>Find trusted vets near you for regular checkups and emergencies</p>
+        <a href="#">Learn More &#8594;</a>
+      </article>
+
+      <article class="service-card">
+        <div class="service-icon icon-gold">&#9986;</div>
+        <h2>Grooming</h2>
+        <p>Professional grooming services to keep your pet looking their best</p>
+        <a href="#">Learn More &#8594;</a>
+      </article>
+
+      <article class="service-card">
+        <div class="service-icon icon-green">&#8962;</div>
+        <h2>Pet Sitting</h2>
+        <p>Reliable pet sitters for when you're away from home</p>
+        <a href="#">Learn More &#8594;</a>
+      </article>
+
+      <article class="service-card">
+        <div class="service-icon icon-orange">&#127891;</div>
+        <h2>Training</h2>
+        <p>Expert trainers to help your pet learn and grow</p>
+        <a href="#">Learn More &#8594;</a>
+      </article>
+
+      <article class="service-card">
+        <div class="service-icon icon-red">&#128247;</div>
+        <h2>Photography</h2>
+        <p>Capture precious moments with professional pet photography</p>
+        <a href="#">Learn More &#8594;</a>
+      </article>
+
+      <article class="service-card">
+        <div class="service-icon icon-gold">&#128717;</div>
+        <h2>Pet Supplies</h2>
+        <p>Quality food, toys, and accessories for your furry friends</p>
+        <a href="#">Learn More &#8594;</a>
+      </article>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PetCare Community</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="community-page">
+  <header class="topbar">
+    <div class="topbar-inner container">
+      <div class="logo-wrap">
+        <div class="logo-mark">PetC</div>
+        <div class="logo-text">PetCare</div>
+      </div>
+      <nav class="main-nav" aria-label="Primary">
+        <a href="/">Home</a>
+        <a href="/services">Services</a>
+        <a href="/lost-found">Lost &amp; Found</a>
+        <a href="/community" class="is-current">Community</a>
+        <a href="/pet-care-tips">Pet Care Tips</a>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/my-note">My Note</a>
+      </nav>
+      <div class="topbar-actions">
+        <button class="search-pill" type="button">&#128269; Search</button>
+        <a class="btn btn-outline" href="/login">&#128100; Sign In</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="community-main">
+    <section class="community-hero container">
+      <div>
+        <h1>Community Feed</h1>
+        <p>Connect with fellow pet lovers, share stories, and get advice</p>
+      </div>
+      <a class="create-post" href="#">Create Post</a>
+    </section>
+
+    <section class="container community-layout" aria-label="Community feed and topics">
+      <div class="feed-column">
+        <article class="post-card">
+          <div class="post-head">
+            <div class="author-block">
+              <img class="avatar" src="https://i.pravatar.cc/100?img=32" alt="Sarah Johnson avatar">
+              <div>
+                <h2>Sarah Johnson</h2>
+                <span>2 hours ago</span>
+              </div>
+            </div>
+            <span class="post-badge">Adoption</span>
+          </div>
+          <p class="post-text">Just adopted this little guy from the shelter! Meet Cooper 🐶 Any tips for first-time dog owners?</p>
+          <div class="post-image-wrap">
+            <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1400&q=80" alt="Dog post image">
+          </div>
+        </article>
+
+        <article class="post-card">
+          <div class="post-head">
+            <div class="author-block">
+              <img class="avatar" src="https://i.pravatar.cc/100?img=12" alt="Mike Chen avatar">
+              <div>
+                <h2>Mike Chen</h2>
+                <span>5 hours ago</span>
+              </div>
+            </div>
+            <span class="post-badge question">Question</span>
+          </div>
+          <p class="post-text">Does anyone know a good vet in downtown? My cat needs her annual checkup.</p>
+        </article>
+      </div>
+
+      <aside class="sidebar-column">
+        <section class="topics-card">
+          <h2>Trending Topics</h2>
+          <ul>
+            <li>#PetAdoption Tips</li>
+            <li>#DogTraining</li>
+            <li>#CatHealth</li>
+            <li>#PetPhotography</li>
+          </ul>
+        </section>
+
+        <section class="join-card">
+          <h2>Join Our Community</h2>
+          <p>Connect with 10,000+ pet lovers and get expert advice</p>
+          <a href="/register" class="join-button">Sign Up Free</a>
+        </section>
+      </aside>
+    </section>
+  </main>
+</body>
+</html>

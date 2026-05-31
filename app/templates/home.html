@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PetCare</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="home-page" id="top">
+  <header class="topbar">
+    <div class="topbar-inner container">
+      <div class="logo-wrap">
+        <div class="logo-mark">PetC</div>
+        <div class="logo-text">PetCare</div>
+      </div>
+      <nav class="main-nav" aria-label="Primary">
+        <a href="#top">Home</a>
+        <a href="/services">Services</a>
+        <a href="/lost-found">Lost &amp; Found</a>
+        <a href="/community">Community</a>
+        <a href="/pet-care-tips">Pet Care Tips</a>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/my-note">My Note</a>
+      </nav>
+      <div class="topbar-actions">
+        <button class="search-pill" type="button">&#128269; Search</button>
+        {% if session.get('user_name') %}
+          <span class="user-chip">Hi, {{ session.get('user_name') }}</span>
+          <a class="btn btn-outline" href="/my-note">My Note</a>
+        {% else %}
+          <a class="btn btn-outline" href="/login">&#128100; Sign In</a>
+        {% endif %}
+      </div>
+    </div>
+  </header>
+
+  <main class="hero-shell">
+    <section class="hero container">
+      <div class="hero-left">
+        <h1>Find Your Perfect Pet Companion</h1>
+        <p>
+          Connect with pet lovers, find lost pets, adopt new friends, and access trusted pet care services all in one place.
+        </p>
+
+        <div class="search-card">
+          <div class="search-tabs" role="tablist" aria-label="Search categories">
+            <button class="tab active" type="button">Adopt</button>
+            <button class="tab" type="button">Lost &amp; Found</button>
+            <button class="tab" type="button">Services</button>
+          </div>
+
+          <div class="search-fields">
+            <label class="field">
+              <span class="field-icon">&#128269;</span>
+              <input type="text" placeholder="Search for pets..." aria-label="Search for pets">
+            </label>
+            <label class="field">
+              <span class="field-icon">&#128205;</span>
+              <input type="text" placeholder="Location" aria-label="Location">
+            </label>
+          </div>
+
+          <button class="search-button" type="button">Search Now</button>
+        </div>
+
+        <div class="stats-row" aria-label="Pet care stats">
+          <div class="stat">
+            <strong>10K+</strong>
+            <span>Happy Pets</span>
+          </div>
+          <div class="stat">
+            <strong>5K+</strong>
+            <span>Adoptions</span>
+          </div>
+          <div class="stat">
+            <strong>500+</strong>
+            <span>Services</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-right">
+        <div class="hero-image-card">
+          <img
+            src="https://images.unsplash.com/photo-1517423440428-a5a00ad493e8?auto=format&fit=crop&w=1200&q=80"
+            alt="A dog with a cat resting together"
+          >
+        </div>
+
+        <div class="floating-badge">
+          <div class="badge-icon">&#128062;</div>
+          <div>
+            <strong>Max found!</strong>
+            <span>Reunited today</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  
+</body>
+</html>

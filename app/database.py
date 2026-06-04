@@ -4,13 +4,18 @@ import config
 class Database:
 
     def __init__(self):
-        self.__connection = pymysql.connect(
-            host=config.MYSQL_HOST,
-            user=config.MYSQL_USER,
-            password=config.MYSQL_PASSWORD,
-            database=config.MYSQL_DATABASE,
-            cursorclass=pymysql.cursors.DictCursor,
-        )
+        try:
+            self.__connection = pymysql.connect(
+                host=config.MYSQL_HOST,
+                user=config.MYSQL_USER,
+                password=config.MYSQL_PASSWORD,
+                database=config.MYSQL_DATABASE,
+                cursorclass=pymysql.cursors.DictCursor,
+            )
+        except pymysql.MySQLError as e:
+            print("Database connection failed!")
+            print("Error:", e)
+            raise e
 
     def fetch_one(self, query, params=None):
         cursor = self.__connection.cursor()
@@ -39,6 +44,7 @@ class Database:
     def create_tables():
         db = Database()
 
+        # Users table
         db.execute("""
             CREATE TABLE IF NOT EXISTS users (
                 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -50,6 +56,7 @@ class Database:
             )
         """)
 
+        # Pets table
         db.execute("""
             CREATE TABLE IF NOT EXISTS pets (
                 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -65,6 +72,7 @@ class Database:
             )
         """)
 
+        # Vaccinations table
         db.execute("""
             CREATE TABLE IF NOT EXISTS vaccinations (
                 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -78,25 +86,56 @@ class Database:
             )
         """)
 
+        # Medical Notes table
         db.execute("""
             CREATE TABLE IF NOT EXISTS medical_notes (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 pet_id INT NOT NULL,
-                title VARCHAR(100) NOT NULL,
-                description TEXT NOT NULL,
-                date DATE NOT NULL,
+                title VARCHAR(100),
+                description TEXT,
+                note TEXT,
+                condition VARCHAR(255),
+                date DATE,
+                note_date DATE,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (pet_id) REFERENCES pets(id) ON DELETE CASCADE
             )
         """)
 
+        # Reminders table
+        db.execute("""
+            CREATE TABLE IF NOT EXISTS reminders (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                user_id INT NOT NULL,
+                title VARCHAR(255) NOT NULL,
+                description TEXT,
+                reminder_date DATE NOT NULL,
+                is_done BOOLEAN DEFAULT FALSE,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+            )
+        """)
+
+        # Tips table
+        db.execute("""
+            CREATE TABLE IF NOT EXISTS tips (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                title VARCHAR(255) NOT NULL,
+                content TEXT NOT NULL,
+                category VARCHAR(100),
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+
+        # Create default admin if not exists
         admin = db.fetch_one(
             "SELECT * FROM users WHERE email = %s", ("admin@petcare.com",)
         )
         if not admin:
             from werkzeug.security import generate_password_hash
             db.execute(
-                "INSERT INTO users (name, email, password, role) VALUES (%s,%s,%s,%s)",
-                ("Admin","admin@petcare.com",generate_password_hash("admin123"),"admin"),
+                "INSERT INTO users (name, email, password, role) VALUES (%s, %s, %s, %s)",
+                ("Admin", "admin@petcare.com", generate_password_hash("admin123"), "admin"),
             )
+
         db.close()

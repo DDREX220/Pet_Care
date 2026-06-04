@@ -94,7 +94,7 @@ class Database:
                 title VARCHAR(100),
                 description TEXT,
                 note TEXT,
-                condition VARCHAR(255),
+                `condition` VARCHAR(255),
                 date DATE,
                 note_date DATE,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

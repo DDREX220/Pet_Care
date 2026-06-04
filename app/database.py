@@ -1,84 +1,102 @@
-import os
-import sqlite3
-from contextlib import contextmanager
-from typing import Optional
+import pymysql
+import config
 
+class Database:
 
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-DEFAULT_DB_PATH = os.path.join(BASE_DIR, "petcare_auth.db")
+    def __init__(self):
+        self.__connection = pymysql.connect(
+            host=config.MYSQL_HOST,
+            user=config.MYSQL_USER,
+            password=config.MYSQL_PASSWORD,
+            database=config.MYSQL_DATABASE,
+            cursorclass=pymysql.cursors.DictCursor,
+        )
 
+    def fetch_one(self, query, params=None):
+        cursor = self.__connection.cursor()
+        cursor.execute(query, params)
+        result = cursor.fetchone()
+        cursor.close()
+        return result
 
-@contextmanager
-def connect(db_path: Optional[str] = None):
-    connection = sqlite3.connect(db_path or DEFAULT_DB_PATH)
-    connection.row_factory = sqlite3.Row
-    try:
-        yield connection
-        connection.commit()
-    finally:
-        connection.close()
+    def fetch_all(self, query, params=None):
+        cursor = self.__connection.cursor()
+        cursor.execute(query, params)
+        results = cursor.fetchall()
+        cursor.close()
+        return results
 
+    def execute(self, query, params=None):
+        cursor = self.__connection.cursor()
+        cursor.execute(query, params)
+        self.__connection.commit()
+        cursor.close()
 
-def init_db(db_path: Optional[str] = None) -> None:
-    with connect(db_path) as connection:
-        connection.execute(
-            """
+    def close(self):
+        self.__connection.close()
+
+    @staticmethod
+    def create_tables():
+        db = Database()
+
+        db.execute("""
             CREATE TABLE IF NOT EXISTS users (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT NOT NULL,
-                email TEXT NOT NULL UNIQUE,
-                password_hash TEXT NOT NULL,
-                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                name VARCHAR(100) NOT NULL,
+                email VARCHAR(100) NOT NULL UNIQUE,
+                password VARCHAR(255) NOT NULL,
+                role VARCHAR(20) NOT NULL DEFAULT 'user',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
-            """
+        """)
+
+        db.execute("""
+            CREATE TABLE IF NOT EXISTS pets (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                user_id INT NOT NULL,
+                name VARCHAR(100) NOT NULL,
+                species VARCHAR(50) NOT NULL,
+                breed VARCHAR(100),
+                age INT,
+                gender VARCHAR(10),
+                photo VARCHAR(255),
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+            )
+        """)
+
+        db.execute("""
+            CREATE TABLE IF NOT EXISTS vaccinations (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                pet_id INT NOT NULL,
+                vaccine_name VARCHAR(100) NOT NULL,
+                date_given DATE NOT NULL,
+                next_due_date DATE,
+                notes TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (pet_id) REFERENCES pets(id) ON DELETE CASCADE
+            )
+        """)
+
+        db.execute("""
+            CREATE TABLE IF NOT EXISTS medical_notes (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                pet_id INT NOT NULL,
+                title VARCHAR(100) NOT NULL,
+                description TEXT NOT NULL,
+                date DATE NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (pet_id) REFERENCES pets(id) ON DELETE CASCADE
+            )
+        """)
+
+        admin = db.fetch_one(
+            "SELECT * FROM users WHERE email = %s", ("admin@petcare.com",)
         )
-        # Ensure profile columns exist (SQLite allows ADD COLUMN)
-        cols = [r[1] for r in connection.execute("PRAGMA table_info(users)")]
-        if "address" not in cols:
-            connection.execute("ALTER TABLE users ADD COLUMN address TEXT")
-        if "photo" not in cols:
-            connection.execute("ALTER TABLE users ADD COLUMN photo TEXT")
-
-
-def get_user_by_email(email: str, db_path: Optional[str] = None):
-    with connect(db_path) as connection:
-        return connection.execute(
-            "SELECT id, name, email, password_hash, address, photo, created_at FROM users WHERE email = ?",
-            (email.strip().lower(),),
-        ).fetchone()
-
-
-def create_user(name: str, email: str, password_hash: str, db_path: Optional[str] = None):
-    with connect(db_path) as connection:
-        cursor = connection.execute(
-            "INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)",
-            (name.strip(), email.strip().lower(), password_hash),
-        )
-        return cursor.lastrowid
-
-
-def get_user_by_id(user_id: int, db_path: Optional[str] = None):
-    with connect(db_path) as connection:
-        return connection.execute(
-            "SELECT id, name, email, address, photo, created_at FROM users WHERE id = ?",
-            (int(user_id),),
-        ).fetchone()
-
-
-def update_user_profile(user_id: int, name: str, email: str, address: str = None, photo: str = None, db_path: Optional[str] = None):
-    with connect(db_path) as connection:
-        # Update provided fields; avoid overwriting password
-        connection.execute(
-            "UPDATE users SET name = ?, email = ?, address = ?, photo = ? WHERE id = ?",
-            (name.strip(), email.strip().lower(), address or None, photo or None, int(user_id)),
-        )
-        return True
-
-
-def delete_user(user_id: int, db_path: Optional[str] = None):
-    with connect(db_path) as connection:
-        connection.execute(
-            "DELETE FROM users WHERE id = ?",
-            (int(user_id),),
-        )
-        return True
+        if not admin:
+            from werkzeug.security import generate_password_hash
+            db.execute(
+                "INSERT INTO users (name, email, password, role) VALUES (%s,%s,%s,%s)",
+                ("Admin","admin@petcare.com",generate_password_hash("admin123"),"admin"),
+            )
+        db.close()

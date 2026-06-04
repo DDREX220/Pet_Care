@@ -6,11 +6,11 @@ class AuthRoutes:
         self.controller = AuthController()
 
     def register(self):
-        self.bp.route("/login", methods=["GET","POST"]) (
-            self.controller.login
-        )
-        self.bp.route("/register", methods=["GET","POST"])(
-            self.controller.register
-        )
+        self.bp.add_url_rule("/login", view_func=self.controller.login, methods=["GET", "POST"])
+        self.bp.add_url_rule("/register", view_func=self.controller.register, methods=["GET", "POST"])
+        self.bp.add_url_rule("/logout", view_func=self.controller.logout)
+        self.bp.add_url_rule("/profile", view_func=self.controller.profile, methods=["GET", "POST"])
+        self.bp.add_url_rule("/reset_password", view_func=self.controller.reset_password, methods=["GET", "POST"])
+        self.bp.add_url_rule("/dashboard", view_func=self.controller.dashboard)
         return self.bp
     

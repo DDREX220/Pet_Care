@@ -71,7 +71,7 @@ class AuthController:
             confirm_password = request.form.get("confirm_password")
             
             user_id = session.get("user_id")
-            user = User.get_id(user_id)
+            user = User.get_by_id(user_id)
             
             if not User.check_password(user['password'], old_password):
                 flash("Incorrect old password.", "danger")

@@ -37,16 +37,3 @@ class Tip:
         )
         db.close()
         return results
-
-    @staticmethod
-    def search_pets_by_name(user_id, name):
-        """US17 - Search pets by name for a logged in user."""
-        db = Database()
-        results = db.fetch_all(
-            """SELECT id, name, species, breed, photo
-               FROM pets
-               WHERE user_id = %s AND name LIKE %s""",
-            (user_id, f"%{name}%")
-        )
-        db.close()
-        return results

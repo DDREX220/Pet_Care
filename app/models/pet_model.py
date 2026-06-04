@@ -1,7 +1,8 @@
 from app.database import Database
 
 class Pet:
-    def __init__(self, user_id, name, species, breed, age, gender, photo=None):
+    def __init__(self, user_id, name, species, breed, age, gender, photo=None, id=None):
+        self.id = id
         self.user_id = user_id
         self.name = name
         self.species = species
@@ -55,3 +56,16 @@ class Pet:
         db = Database()
         db.execute("DELETE FROM pets WHERE id = %s", (pet_id,))
         db.close()
+
+    @staticmethod
+    def search_pets_by_name(user_id, name):
+        """US17 - Search pets by name for a logged in user."""
+        db = Database()
+        results = db.fetch_all(
+            """SELECT id, name, species, breed, photo
+               FROM pets
+               WHERE user_id = %s AND name LIKE %s""",
+            (user_id, f"%{name}%")
+        )
+        db.close()
+        return results

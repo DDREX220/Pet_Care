@@ -96,13 +96,19 @@ def ensure_schema():
             )
             cursor.execute(
                 """
-                CREATE TABLE IF NOT EXISTS products (
+                CREATE TABLE IF NOT EXISTS pets (
                     id INT AUTO_INCREMENT PRIMARY KEY,
-                    name VARCHAR(160) NOT NULL,
-                    category VARCHAR(120) NOT NULL,
-                    price DECIMAL(10, 2) NOT NULL,
-                    quantity INT NOT NULL,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    user_id INT,
+                    name VARCHAR(120),
+                    type VARCHAR(50) NOT NULL,
+                    breed VARCHAR(120),
+                    age VARCHAR(50),
+                    description TEXT,
+                    status ENUM('owned', 'lost', 'found') DEFAULT 'owned',
+                    location VARCHAR(255),
+                    contact_info VARCHAR(255),
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
                 """
             )

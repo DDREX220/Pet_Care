@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .report-page {
+        max-width: 800px;
+        margin: 0 auto;
+        display: grid;
+        gap: 22px;
+    }
+
+    .report-form {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .report-form .full {
+        grid-column: 1 / -1;
+    }
+
+    .report-form label {
+        display: grid;
+        gap: 8px;
+        font-weight: 600;
+        color: var(--accent-strong);
+    }
+
+    .report-form input, .report-form select, .report-form textarea {
+        padding: 12px 16px;
+        border-radius: 12px;
+        border: 1px solid var(--line);
+        font-family: inherit;
+        font-size: 1rem;
+    }
+
+    .radio-group {
+        display: flex;
+        gap: 20px;
+        padding: 10px 0;
+    }
+
+    .radio-option {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+    }
+
+    .radio-option input {
+        width: 20px;
+        height: 20px;
+    }
+
+    .btn-submit {
+        background: var(--accent);
+        color: #fff;
+        padding: 16px;
+        border-radius: 14px;
+        border: 0;
+        font-size: 1.1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: opacity 0.2s;
+    }
+
+    .btn-submit:hover { opacity: 0.9; }
+</style>
+
+<div class="report-page">
+    <div class="panel">
+        <div class="panel-header">
+            <div>
+                <h3>Report a Lost or Found Pet</h3>
+                <p class="subtitle">Fill out the details below to alert the community.</p>
+            </div>
+        </div>
+
+        <form action="{{ url_for('pet.report_lost_found') }}" method="POST" class="report-form">
+            <div class="full">
+                <label>Report Type</label>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="status" value="lost" required checked>
+                        <span>I lost my pet</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="status" value="found">
+                        <span>I found a pet</span>
+                    </label>
+                </div>
+            </div>
+
+            <label>
+                Pet Name (if known)
+                <input type="text" name="name" placeholder="e.g. Max or Unknown">
+            </label>
+
+            <label>
+                Animal Type
+                <select name="type" required>
+                    <option value="Dog">Dog</option>
+                    <option value="Cat">Cat</option>
+                    <option value="Bird">Bird</option>
+                    <option value="Rabbit">Rabbit</option>
+                    <option value="Other">Other</option>
+                </select>
+            </label>
+
+            <label>
+                Breed (if known)
+                <input type="text" name="breed" placeholder="e.g. Golden Retriever">
+            </label>
+
+            <label>
+                Age (approximate)
+                <input type="text" name="age" placeholder="e.g. 2 years">
+            </label>
+
+            <label class="full">
+                Location
+                <input type="text" name="location" placeholder="Where was the pet last seen or found?" required>
+            </label>
+
+            <label class="full">
+                Contact Information
+                <input type="text" name="contact_info" placeholder="Phone number or email" required>
+            </label>
+
+            <label class="full">
+                Description & Notes
+                <textarea name="description" rows="4" placeholder="Distinguishing marks, collar color, behavior..."></textarea>
+            </label>
+
+            <button type="submit" class="btn-submit full">Submit Report</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

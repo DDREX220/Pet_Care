@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .lost-found-page {
+        display: grid;
+        gap: 22px;
+    }
+
+    .hero {
+        display: grid;
+        gap: 10px;
+        padding: 24px;
+        border-radius: 22px;
+        background: linear-gradient(135deg, rgba(184, 116, 0, 0.1), rgba(255, 255, 255, 0.9));
+        border: 1px solid var(--line);
+    }
+
+    .hero h2 { margin: 0; font-size: 1.9rem; }
+    .hero p { margin: 0; color: var(--muted); max-width: 62ch; }
+
+    .filters {
+        display: flex;
+        gap: 14px;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        margin-bottom: 20px;
+    }
+
+    .filter-group {
+        display: grid;
+        gap: 6px;
+    }
+
+    .filter-group label {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--muted);
+    }
+
+    .filter-group select, .filter-group input {
+        padding: 10px 14px;
+        border-radius: 12px;
+        border: 1px solid var(--line);
+        background: #fff;
+    }
+
+    .pets-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+    }
+
+    .pet-card {
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        padding: 24px;
+        background: #fff;
+        display: grid;
+        gap: 14px;
+        position: relative;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .pet-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    }
+
+    .status-badge {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        padding: 6px 12px;
+        border-radius: 999px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .status-lost { background: #fff4f4; color: #b42318; }
+    .status-found { background: #eef7f6; color: #2f6f6d; }
+
+    .pet-card h3 { margin: 0; font-size: 1.4rem; }
+    .pet-info { margin: 0; color: var(--muted); font-size: 0.95rem; }
+    .pet-location { display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--accent-strong); }
+    .pet-desc { font-size: 1rem; line-height: 1.6; color: #4a4a4a; }
+
+    .pet-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 10px;
+        padding-top: 14px;
+        border-top: 1px solid var(--line);
+    }
+
+    .btn-report {
+        background: var(--accent);
+        color: #fff;
+        padding: 12px 24px;
+        border-radius: 999px;
+        text-decoration: none;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-mark {
+        background: #eef7f6;
+        color: var(--accent-strong);
+        padding: 8px 16px;
+        border-radius: 12px;
+        border: 0;
+        font-weight: 600;
+        cursor: pointer;
+    }
+</style>
+
+<div class="lost-found-page">
+    <div class="hero">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+            <div>
+                <h2>Lost & Found Pets</h2>
+                <p>Help reunite pets with their families. Browse reported lost or found animals in your area.</p>
+            </div>
+            <a href="{{ url_for('pet.report_lost_found') }}" class="btn-report">
+                <i class="fa-solid fa-plus"></i> Report a Pet
+            </a>
+        </div>
+    </div>
+
+    <form class="panel filters" action="{{ url_for('pet.lost_found') }}" method="GET">
+        <div class="filter-group">
+            <label>Status</label>
+            <select name="status">
+                <option value="">All Reports</option>
+                <option value="lost" {% if status_filter == 'lost' %}selected{% endif %}>Lost</option>
+                <option value="found" {% if status_filter == 'found' %}selected{% endif %}>Found</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>Location</label>
+            <input type="text" name="location" value="{{ location_filter }}" placeholder="City, neighborhood...">
+        </div>
+        <button type="submit" class="secondary-button" style="margin-bottom: 0;">Apply Filters</button>
+        <a href="{{ url_for('pet.lost_found') }}" class="ghost-button" style="padding: 11px 18px;">Reset</a>
+    </form>
+
+    <div class="pets-grid">
+        {% for pet in pets %}
+        <article class="pet-card">
+            <span class="status-badge status-{{ pet.status }}">{{ pet.status }}</span>
+            <h3>{{ pet.name or "Unnamed Pet" }}</h3>
+            <p class="pet-info">{{ pet.type }}{% if pet.breed %} • {{ pet.breed }}{% endif %}</p>
+            <div class="pet-location">
+                <i class="fa-solid fa-location-dot"></i> {{ pet.location or "Unknown location" }}
+            </div>
+            <p class="pet-desc">{{ pet.description or "No description provided." }}</p>
+            
+            <div class="pet-footer">
+                <div style="font-size: 0.85rem; color: var(--muted);">
+                    Contact: <strong>{{ pet.contact_info }}</strong>
+                </div>
+                
+                {% if current_user.is_authenticated and (pet.user_id == current_user.id or pet.status == 'found') %}
+                <form action="{{ url_for('pet.mark_as_found', pet_id=pet.id) }}" method="POST">
+                    <button type="submit" class="btn-mark">Reunited!</button>
+                </form>
+                {% endif %}
+            </div>
+        </article>
+        {% else %}
+        <div class="empty-state" style="grid-column: 1 / -1;">
+            <h3>No reports found</h3>
+            <p>Try adjusting your filters or be the first to report a pet.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

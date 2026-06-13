@@ -1,11 +1,12 @@
 import os
 
 from flask import Flask, render_template
+from flask_login import LoginManager
 
-from .database import DEFAULTS
+from .database import DEFAULTS, ensure_schema
 from .routes.authroute import AuthRoutes
-from .routes.productroute import ProductRoutes
 from .routes.petroute import PetRoutes
+from .models import User
 
 
 def create_app():
@@ -24,6 +25,14 @@ def create_app():
         MYSQL_DATABASE=os.environ.get("MYSQL_DATABASE", DEFAULTS["MYSQL_DATABASE"]),
     )
 
+    login_manager = LoginManager()
+    login_manager.login_view = "auth.login"
+    login_manager.init_app(app)
+
+    @login_manager.user_loader
+    def load_user(user_id):
+        return User.get(user_id)
+
     @app.route("/")
     def home():
         return render_template("home.html")
@@ -33,7 +42,13 @@ def create_app():
         return render_template("dashboard.html")
 
     app.register_blueprint(AuthRoutes().register())
-    app.register_blueprint(ProductRoutes().register())
     app.register_blueprint(PetRoutes().register())
+
+    # Ensure schema on app startup
+    with app.app_context():
+        try:
+            ensure_schema()
+        except Exception as e:
+            print(f"Error ensuring schema: {e}")
 
     return app

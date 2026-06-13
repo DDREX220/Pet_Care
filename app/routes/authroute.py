@@ -18,5 +18,8 @@ class AuthRoutes:
         self.bp.route("/reset_password", methods=["GET","POST"])(
             self.controller.reset_password
         )
+        self.bp.route("/logout")(
+            self.controller.logout
+        )
         return self.bp
     

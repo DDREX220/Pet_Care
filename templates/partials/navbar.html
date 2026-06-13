@@ -1,21 +1,38 @@
-<header class="home-navbar">
-    <div class="home-navbar-top">
-        <div class="home-logo">Pet Care</div>
+<nav class="home-nav">
+  <div class="left-nav">
+    <a href="{{ url_for('home') }}" class="logo">
+      <div class="logo-mark">🐾</div>
+      <span>PetCare</span>
+    </a>
 
-        <div class="home-buttons">
-            <a class="signin-btn" href="{{ url_for('auth.login') }}">Login</a>
-            <a class="post-btn" href="{{ url_for('auth.register') }}">Register</a>
-        </div>
+    <div class="nav-links">
+      <a href="{{ url_for('home') }}">Home</a>
+      <a href="{{ url_for('dashboard') }}">Dashboard</a>
+      <a href="{{ url_for('pet.pets') }}">My Pets</a>
+      <a href="{{ url_for('pet.lost_found') }}">Lost & Found</a>
+      <a href="{{ url_for('auth.profile') }}">Profile</a>
+    </div>
+  </div>
+
+  <div class="right-nav">
+    <div class="search-box">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <span>Search</span>
     </div>
 
-    <nav class="home-links">
-        <a href="{{ url_for('home') }}">Home</a>
-        <a href="{{ url_for('dashboard') }}">Dashboard</a>
-        <a href="{{ url_for('pet.pets') }}">Pets</a>
-        <a href="{{ url_for('auth.profile') }}">Profile</a>
-        <a href="{{ url_for('auth.reset_password') }}">Reset Password</a>
-        <a href="{{ url_for('product.add_product') }}">Add Product</a>
-        <a href="{{ url_for('product.get_product') }}">Get Product</a>
-        <a href="{{ url_for('product.delete_product') }}">Delete Product</a>
-    </nav>
-</header>
+    {% if current_user.is_authenticated %}
+      <div style="display: flex; gap: 10px; align-items: center;">
+        <a class="sign-btn" href="{{ url_for('auth.profile') }}">
+          <i class="fa-regular fa-user"></i>
+          <span>{{ current_user.name }}</span>
+        </a>
+        <a href="{{ url_for('auth.logout') }}" style="color: var(--muted); font-size: 0.9rem; font-weight: 600;">Logout</a>
+      </div>
+    {% else %}
+      <a class="sign-btn" href="{{ url_for('auth.login') }}">
+        <i class="fa-regular fa-user"></i>
+        <span>Sign In</span>
+      </a>
+    {% endif %}
+  </div>
+</nav>

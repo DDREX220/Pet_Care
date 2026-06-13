@@ -1,70 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register | PetCare</title>
+{% extends "base.html" %}
 
-    <link rel="stylesheet"
-    href="{{ url_for('static', filename='style.css') }}">
+{% block content %}
+<div class="profile-wrapper">
+    <div class="profile-card">
+        <h1>Create Account</h1>
+        <p class="dashboard-text">Join our community of pet lovers today!</p>
+        
+        <form method="POST">
+            <input type="text" name="name" placeholder="Full Name" required value="{{ name or '' }}">
+            <input type="email" name="email" placeholder="Email Address" required value="{{ email or '' }}">
+            <input type="password" name="password" placeholder="Password" required>
+            <button class="profile-btn" style="width: 100%;" type="submit">Register</button>
+        </form>
 
-</head>
-<body>
-
-    {% include "partials/navbar.html" %}
-
-    <div class="auth-container">
-
-        <div class="auth-left">
-
-            <h1>Join PetCare Community</h1>
-
-            <p>
-                Create your account and connect with pet lovers,
-                adoption services, and trusted pet care providers.
-            </p>
-
-        </div>
-
-        <div class="auth-right">
-
-            <div class="form-box">
-
-                <h2>Create Account</h2>
-
-                <form method="POST">
-
-                    <input type="text"
-                    name="name"
-                    placeholder="Full Name"
-                    required>
-
-                    <input type="email"
-                    name="email"
-                    placeholder="Email Address"
-                    required>
-
-                    <input type="password"
-                    name="password"
-                    placeholder="Password"
-                    required>
-
-                    <button type="submit">
-                        Register
-                    </button>
-
-                </form>
-
-                <p class="bottom-text">
-                    Already have an account?
-                    <a href="{{ url_for('auth.login') }}">Login</a>
-                </p>
-
-            </div>
-
-        </div>
-
+        <p class="bottom-text" style="margin-top: 20px; color: var(--muted-color);">
+            Already have an account?
+            <a href="{{ url_for('auth.login') }}" style="color: var(--primary); text-decoration: none; font-weight: 700;">Login</a>
+        </p>
     </div>
-
-</body>
-</html>
+</div>
+{% endblock %}

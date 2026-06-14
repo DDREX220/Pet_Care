@@ -4,164 +4,369 @@
 <style>
     .lost-found-page {
         display: grid;
-        gap: 22px;
+        gap: 30px;
     }
 
     .hero {
-        display: grid;
-        gap: 10px;
-        padding: 24px;
-        border-radius: 22px;
-        background: linear-gradient(135deg, rgba(184, 116, 0, 0.1), rgba(255, 255, 255, 0.9));
-        border: 1px solid var(--line);
+        padding: 40px;
+        border-radius: 30px;
+        background: linear-gradient(135deg, #fff7e3 0%, #fff 100%);
+        border: 2px dashed var(--line);
+        position: relative;
+        overflow: hidden;
     }
 
-    .hero h2 { margin: 0; font-size: 1.9rem; }
-    .hero p { margin: 0; color: var(--muted); max-width: 62ch; }
+    .hero::before {
+        content: "🐾";
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        font-size: 80px;
+        opacity: 0.05;
+        transform: rotate(15deg);
+    }
+
+    .hero-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 24px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .hero h2 { 
+        margin: 0; 
+        font-size: 2.2rem; 
+        color: var(--primary-dark);
+        font-weight: 800;
+    }
+
+    .hero p { 
+        margin: 10px 0 0; 
+        color: var(--muted); 
+        max-width: 50ch;
+        font-size: 1.1rem;
+    }
+
+    .btn-report {
+        background: var(--primary);
+        color: #111;
+        padding: 16px 32px;
+        border-radius: 20px;
+        text-decoration: none;
+        font-weight: 800;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 8px 0 var(--primary-dark);
+        transition: all 0.2s;
+    }
+
+    .btn-report:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 0 var(--primary-dark);
+    }
+
+    .btn-report:active {
+        transform: translateY(4px);
+        box-shadow: 0 4px 0 var(--primary-dark);
+    }
+
+    .filters-panel {
+        background: #fff;
+        padding: 24px;
+        border-radius: 24px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        border: 1px solid #eee;
+    }
 
     .filters {
         display: flex;
-        gap: 14px;
+        gap: 20px;
         flex-wrap: wrap;
         align-items: flex-end;
-        margin-bottom: 20px;
     }
 
     .filter-group {
         display: grid;
-        gap: 6px;
+        gap: 8px;
+        flex: 1;
+        min-width: 200px;
     }
 
     .filter-group label {
-        font-size: 0.9rem;
-        font-weight: 600;
-        color: var(--muted);
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: var(--primary-dark);
+        display: flex;
+        align-items: center;
+        gap: 6px;
     }
 
     .filter-group select, .filter-group input {
-        padding: 10px 14px;
-        border-radius: 12px;
-        border: 1px solid var(--line);
+        padding: 12px 16px;
+        border-radius: 14px;
+        border: 2px solid #f0f0f0;
+        background: #fafafa;
+        font-size: 1rem;
+        transition: all 0.2s;
+    }
+
+    .filter-group select:focus, .filter-group input:focus {
+        border-color: var(--primary);
         background: #fff;
+        outline: none;
     }
 
     .pets-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 20px;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 24px;
     }
 
     .pet-card {
-        border: 1px solid var(--line);
-        border-radius: 20px;
-        padding: 24px;
         background: #fff;
-        display: grid;
-        gap: 14px;
+        border-radius: 28px;
+        padding: 0;
+        overflow: hidden;
+        border: 1px solid #eee;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        display: flex;
+        flex-direction: column;
         position: relative;
-        transition: transform 0.2s, box-shadow 0.2s;
     }
 
     .pet-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(231, 163, 56, 0.15);
+    }
+
+    .card-header {
+        padding: 24px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        background: #fff7e3;
+    }
+
+    .pet-avatar {
+        width: 64px;
+        height: 64px;
+        background: #fff;
+        border-radius: 18px;
+        display: grid;
+        place-items: center;
+        font-size: 32px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+
+    .header-info {
+        flex: 1;
+    }
+
+    .header-info h3 {
+        margin: 0;
+        font-size: 1.3rem;
+        font-weight: 800;
+        color: var(--text-color);
+    }
+
+    .pet-type-tag {
+        font-size: 0.85rem;
+        color: var(--muted);
+        font-weight: 600;
     }
 
     .status-badge {
         position: absolute;
         top: 20px;
         right: 20px;
-        padding: 6px 12px;
-        border-radius: 999px;
-        font-size: 0.8rem;
-        font-weight: 700;
+        padding: 6px 14px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 800;
         text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transform: rotate(3deg);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
 
-    .status-lost { background: #fff4f4; color: #b42318; }
-    .status-found { background: #eef7f6; color: #2f6f6d; }
+    .status-lost { background: #ff4d4d; color: #fff; }
+    .status-found { background: #2ecc71; color: #fff; }
 
-    .pet-card h3 { margin: 0; font-size: 1.4rem; }
-    .pet-info { margin: 0; color: var(--muted); font-size: 0.95rem; }
-    .pet-location { display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--accent-strong); }
-    .pet-desc { font-size: 1rem; line-height: 1.6; color: #4a4a4a; }
+    .card-body {
+        padding: 24px;
+        display: grid;
+        gap: 12px;
+        flex: 1;
+    }
 
-    .pet-footer {
+    .info-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 0.95rem;
+        color: #555;
+    }
+
+    .info-row i {
+        color: var(--primary);
+        width: 20px;
+        text-align: center;
+    }
+
+    .pet-desc {
+        font-size: 0.95rem;
+        line-height: 1.6;
+        color: #666;
+        margin: 10px 0;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .card-footer {
+        padding: 20px 24px;
+        background: #fafafa;
+        border-top: 1px solid #f0f0f0;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-top: 10px;
-        padding-top: 14px;
-        border-top: 1px solid var(--line);
     }
 
-    .btn-report {
-        background: var(--accent);
-        color: #fff;
-        padding: 12px 24px;
-        border-radius: 999px;
-        text-decoration: none;
+    .contact-info {
+        font-size: 0.85rem;
+    }
+
+    .contact-info label {
+        display: block;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        color: var(--muted);
+        font-weight: 800;
+        margin: 0;
+    }
+
+    .contact-info span {
         font-weight: 700;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
+        color: var(--text-color);
     }
 
     .btn-mark {
         background: #eef7f6;
-        color: var(--accent-strong);
+        color: #2ecc71;
         padding: 8px 16px;
         border-radius: 12px;
-        border: 0;
-        font-weight: 600;
+        border: 2px solid #2ecc71;
+        font-weight: 800;
         cursor: pointer;
+        font-size: 0.85rem;
+        transition: all 0.2s;
+    }
+
+    .btn-mark:hover {
+        background: #2ecc71;
+        color: #fff;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        background: #fff;
+        border-radius: 30px;
+        border: 2px dashed #eee;
+    }
+
+    .empty-state i {
+        font-size: 60px;
+        color: #ddd;
+        margin-bottom: 20px;
+    }
+
+    .empty-state h3 {
+        color: var(--text-color);
+        font-weight: 800;
+        margin-bottom: 10px;
     }
 </style>
 
 <div class="lost-found-page">
     <div class="hero">
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+        <div class="hero-content">
             <div>
                 <h2>Lost & Found Pets</h2>
-                <p>Help reunite pets with their families. Browse reported lost or found animals in your area.</p>
+                <p>Let's help our furry friends find their way back home. Browse reported pets or add a new alert.</p>
             </div>
             <a href="{{ url_for('pet.report_lost_found') }}" class="btn-report">
-                <i class="fa-solid fa-plus"></i> Report a Pet
+                <i class="fa-solid fa-paw"></i> Report a Pet
             </a>
         </div>
     </div>
 
-    <form class="panel filters" action="{{ url_for('pet.lost_found') }}" method="GET">
-        <div class="filter-group">
-            <label>Status</label>
-            <select name="status">
-                <option value="">All Reports</option>
-                <option value="lost" {% if status_filter == 'lost' %}selected{% endif %}>Lost</option>
-                <option value="found" {% if status_filter == 'found' %}selected{% endif %}>Found</option>
-            </select>
-        </div>
-        <div class="filter-group">
-            <label>Location</label>
-            <input type="text" name="location" value="{{ location_filter }}" placeholder="City, neighborhood...">
-        </div>
-        <button type="submit" class="secondary-button" style="margin-bottom: 0;">Apply Filters</button>
-        <a href="{{ url_for('pet.lost_found') }}" class="ghost-button" style="padding: 11px 18px;">Reset</a>
-    </form>
+    <div class="filters-panel">
+        <form class="filters" action="{{ url_for('pet.lost_found') }}" method="GET">
+            <div class="filter-group">
+                <label><i class="fa-solid fa-bullhorn"></i> Status</label>
+                <select name="status">
+                    <option value="">All Reports</option>
+                    <option value="lost" {% if status_filter == 'lost' %}selected{% endif %}>Lost</option>
+                    <option value="found" {% if status_filter == 'found' %}selected{% endif %}>Found</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label><i class="fa-solid fa-location-crosshairs"></i> Location</label>
+                <input type="text" name="location" value="{{ location_filter }}" placeholder="City, neighborhood...">
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button type="submit" class="post-btn" style="height: 48px; padding: 0 30px;">
+                    Apply
+                </button>
+                <a href="{{ url_for('pet.lost_found') }}" class="sign-btn" style="height: 48px; padding: 0 20px; text-decoration: none;">
+                    Reset
+                </a>
+            </div>
+        </form>
+    </div>
 
     <div class="pets-grid">
         {% for pet in pets %}
         <article class="pet-card">
             <span class="status-badge status-{{ pet.status }}">{{ pet.status }}</span>
-            <h3>{{ pet.name or "Unnamed Pet" }}</h3>
-            <p class="pet-info">{{ pet.type }}{% if pet.breed %} • {{ pet.breed }}{% endif %}</p>
-            <div class="pet-location">
-                <i class="fa-solid fa-location-dot"></i> {{ pet.location or "Unknown location" }}
+            <div class="card-header">
+                <div class="pet-avatar">
+                    {% if pet.type == 'Dog' %}🐶
+                    {% elif pet.type == 'Cat' %}🐱
+                    {% elif pet.type == 'Bird' %}🐦
+                    {% elif pet.type == 'Rabbit' %}🐰
+                    {% else %}🐾{% endif %}
+                </div>
+                <div class="header-info">
+                    <h3>{{ pet.name or "Unnamed Pet" }}</h3>
+                    <div class="pet-type-tag">{{ pet.type }}{% if pet.breed %} • {{ pet.breed }}{% endif %}</div>
+                </div>
             </div>
-            <p class="pet-desc">{{ pet.description or "No description provided." }}</p>
             
-            <div class="pet-footer">
-                <div style="font-size: 0.85rem; color: var(--muted);">
-                    Contact: <strong>{{ pet.contact_info }}</strong>
+            <div class="card-body">
+                <div class="info-row">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <span>{{ pet.location or "Unknown location" }}</span>
+                </div>
+                {% if pet.age %}
+                <div class="info-row">
+                    <i class="fa-solid fa-calendar-day"></i>
+                    <span>Approx. {{ pet.age }}</span>
+                </div>
+                {% endif %}
+                <p class="pet-desc">{{ pet.description or "No description provided." }}</p>
+            </div>
+            
+            <div class="card-footer">
+                <div class="contact-info">
+                    <label>Contact Info</label>
+                    <span>{{ pet.contact_info }}</span>
                 </div>
                 
                 {% if current_user.is_authenticated and (pet.user_id == current_user.id or pet.status == 'found') %}
@@ -173,6 +378,7 @@
         </article>
         {% else %}
         <div class="empty-state" style="grid-column: 1 / -1;">
+            <i class="fa-solid fa-magnifying-glass"></i>
             <h3>No reports found</h3>
             <p>Try adjusting your filters or be the first to report a pet.</p>
         </div>
@@ -180,3 +386,4 @@
     </div>
 </div>
 {% endblock %}
+

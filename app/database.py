@@ -10,7 +10,7 @@ class Database:
             password=config.MYSQL_PASSWORD,
             database=config.MYSQL_DATABASE,
             cursorclass=pymysql.cursors.DictCursor,
-        )
+        ) 
 
     def fetch_one(self, query, params=None):
         cursor = self.__connection.cursor()
@@ -99,4 +99,41 @@ class Database:
                 "INSERT INTO users (name, email, password, role) VALUES (%s,%s,%s,%s)",
                 ("Admin","admin@petcare.com",generate_password_hash("admin123"),"admin"),
             )
+        db.execute("""
+            CREATE TABLE IF NOT EXISTS reminders (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                user_id INT NOT NULL,
+                title VARCHAR(100) NOT NULL,
+                description TEXT,
+                reminder_date DATE NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+            )
+        """)
+
+        db.execute("""
+            CREATE TABLE IF NOT EXISTS tips (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                title VARCHAR(100) NOT NULL,
+                content TEXT NOT NULL,
+                category VARCHAR(50),
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+
+        db.execute("""
+            CREATE TABLE IF NOT EXISTS lost_found (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                user_id INT NOT NULL,
+                pet_id INT,
+                type VARCHAR(10) NOT NULL,
+                location VARCHAR(255) NOT NULL,
+                description TEXT,
+                photo VARCHAR(255),
+                status VARCHAR(20) DEFAULT 'active',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+                FOREIGN KEY (pet_id) REFERENCES pets(id) ON DELETE SET NULL
+            )
+        """)    
         db.close()

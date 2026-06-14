@@ -16,15 +16,28 @@ def create_app():
     from app.routes.pet_routes import PetRoutes
     from app.routes.vaccination_routes import VaccinationRoutes
     from app.routes.medical_routes import MedicalRoutes
+    from app.routes.reminder_routes import ReminderRoutes
+    from app.routes.tip_routes import TipRoutes
+    from app.routes.lost_found_routes import LostFoundRoutes
+    from app.routes.admin_routes import AdminRoutes
 
     auth_routes = AuthRoutes()
     pet_routes = PetRoutes()
     vaccination_routes = VaccinationRoutes()
     medical_routes = MedicalRoutes()
+    reminder_routes = ReminderRoutes()
+    tip_routes = TipRoutes()
+    lost_found_routes = LostFoundRoutes()
+    admin_routes = AdminRoutes()
+
     app.register_blueprint(auth_routes.register())
     app.register_blueprint(pet_routes.register())
     app.register_blueprint(vaccination_routes.register())
     app.register_blueprint(medical_routes.register())
+    app.register_blueprint(reminder_routes.register())
+    app.register_blueprint(tip_routes.register())
+    app.register_blueprint(lost_found_routes.register())
+    app.register_blueprint(admin_routes.register())
 
     # Static routes
     @app.route("/")
@@ -55,5 +68,9 @@ def create_app():
     @app.errorhandler(404)
     def page_not_found(e):
         return render_template("errors/404.html"), 404
+
+    @app.errorhandler(403)
+    def forbidden(e):
+        return render_template("errors/403.html"), 403
 
     return app

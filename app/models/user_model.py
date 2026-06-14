@@ -54,3 +54,23 @@ class User:
     @staticmethod
     def check_password(hashed_password, password):
         return check_password_hash(hashed_password, password)
+
+    @staticmethod
+    def get_all():
+        """Admin - Get all users."""
+        db = Database()
+        users = db.fetch_all(
+            "SELECT id, name, email, role, created_at FROM users ORDER BY id"
+        )
+        db.close()
+        return users
+
+    @staticmethod
+    def delete(user_id):
+        """Admin - Delete a user."""
+        db = Database()
+        db.execute(
+            "DELETE FROM users WHERE id = %s",
+            (user_id,)
+        )
+        db.close()

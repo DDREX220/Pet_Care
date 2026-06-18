@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .profile-wrapper {
+        display: flex;
+        justify-content: center;
+        padding: 40px 20px;
+    }
+    .profile-card {
+        background: #fff;
+        border-radius: 24px;
+        padding: 40px;
+        width: 100%;
+        max-width: 500px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--line);
+        text-align: center;
+    }
+    .profile-image {
+        font-size: 4rem;
+        background: #eef7f6;
+        width: 100px;
+        height: 100px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        margin: 0 auto 20px;
+    }
+    .profile-email {
+        color: var(--muted);
+        margin-bottom: 20px;
+    }
+    .profile-description {
+        color: #4a4a4a;
+        margin-bottom: 30px;
+        line-height: 1.6;
+    }
+    .profile-form {
+        display: grid;
+        gap: 16px;
+        text-align: left;
+    }
+    .profile-form label {
+        font-weight: 600;
+        color: var(--accent-strong);
+    }
+    .profile-form input {
+        padding: 12px;
+        border-radius: 12px;
+        border: 1px solid var(--line);
+        background: #fdfaf4;
+    }
+    .secondary-button {
+        background: linear-gradient(135deg, var(--primary), var(--primary-light));
+        color: white;
+        border: none;
+        padding: 14px 28px;
+        border-radius: 50px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 4px 15px rgba(231, 163, 56, 0.3);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        text-align: center;
+        text-decoration: none;
+        margin-top: 10px;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .secondary-button:hover {
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 8px 25px rgba(231, 163, 56, 0.4);
+        background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+    }
+
+    .secondary-button:active {
+        transform: translateY(0) scale(0.98);
+    }
+</style>
+
+<div class="profile-wrapper">
+    <div class="profile-card">
+        <div class="profile-image">
+            👤
+        </div>
+
+        {% if user %}
+            <h1 style="color: var(--text); margin-bottom: 5px;">{{ user.name }}</h1>
+            <p class="profile-email">{{ user.email }}</p>
+
+            <form action="{{ url_for('auth.profile') }}" method="POST" class="profile-form">
+                <label>
+                    Name
+                    <input type="text" name="name" value="{{ user.name }}" required>
+                </label>
+                <label>
+                    Email
+                    <input type="email" name="email" value="{{ user.email }}" required>
+                </label>
+                <button type="submit" class="secondary-button">
+                    <span>✨</span> Update Profile
+                </button>
+            </form>
+            
+            <div style="margin-top: 20px;">
+                <a href="{{ url_for('auth.reset_password') }}" style="color: var(--accent); text-decoration: none; font-weight: 600;">Change Password</a>
+            </div>
+        {% else %}
+            <h1>Guest User</h1>
+            <p class="profile-email">Please sign in to view your profile.</p>
+            <a href="{{ url_for('auth.login') }}" class="secondary-button">Sign In</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-container">
+    <h1>Welcome to PetCare Dashboard</h1>
+    <p class="dashboard-text">
+        Manage your pets, appointments, adoption activities, and pet services.
+    </p>
+
+    <div class="card-container">
+        <div class="dashboard-card">
+            <h2>My Pets</h2>
+            <p>View and manage your pets.</p>
+            <a class="dashboard-button" href="{{ url_for('pets.view_pets') }}">Open Pets</a>
+        </div>
+
+        <div class="dashboard-card">
+            <h2>Lost & Found</h2>
+            <p>Report or find missing pets.</p>
+            <a class="dashboard-button" href="{{ url_for('lost_found.view_lost') }}">Open List</a>
+        </div>
+
+        <div class="dashboard-card">
+            <h2>Appointments</h2>
+            <p>Track upcoming appointments.</p>
+            <a class="dashboard-button" href="#">View All</a>
+        </div>
+
+        <div class="dashboard-card">
+            <h2>Community</h2>
+            <p>Connect with pet lovers.</p>
+            <a class="dashboard-button" href="#">Join Chat</a>
+        </div>
+
+        <div class="dashboard-card">
+            <h2>Services</h2>
+            <p>Explore pet care services.</p>
+            <a class="dashboard-button" href="#">Find Help</a>
+        </div>
+    </div>
+
+    <div style="margin-top: 60px; text-align: center;">
+        <h2 style="font-size: 32px; margin-bottom: 20px; color: var(--text-color);">Pet Care Tips</h2>
+        
+        <div id="tip-card-container" style="display: flex; justify-content: center; margin-top: 30px;">
+            <div class="tip-card">
+                <div class="tip-icon">💡</div>
+                <h3 id="tip-title">Click the button for a tip!</h3>
+                <p id="tip-content">Essential tips for keeping your pet happy and healthy.</p>
+                <button class="dashboard-button" onclick="generateNewTip()">Generate New Tip</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const petTips = [
+        {
+            title: "Healthy Diet",
+            content: "A balanced diet is crucial for your pet's health. Ensure they get the right mix of proteins, fats, and vitamins tailored to their age and breed."
+        },
+        {
+            title: "Daily Exercise",
+            content: "Regular physical activity helps prevent obesity and behavioral issues. Dogs need daily walks, while cats enjoy interactive play."
+        },
+        {
+            title: "Grooming Basics",
+            content: "Brushing your pet's coat regularly removes loose hair and prevents matting. It's also a great time to check for skin issues."
+        },
+        {
+            title: "Regular Vet Checkups",
+            content: "Annual or bi-annual visits to the vet help catch potential health problems early and keep vaccinations up to date."
+        },
+        {
+            title: "Hydration is Key",
+            content: "Always provide fresh, clean water for your pets. Dehydration can lead to serious health issues, especially in hot weather."
+        },
+        {
+            title: "Mental Stimulation",
+            content: "Puzzle toys and training sessions keep your pet's mind sharp and prevent boredom-related destructive behavior."
+        },
+        {
+            title: "Dental Health",
+            content: "Dental hygiene is often overlooked. Brush your pet's teeth or use dental treats to prevent plaque buildup and gum disease."
+        },
+        {
+            title: "Safe Environment",
+            content: "Keep toxic plants, chemicals, and small objects that could be swallowed out of reach to ensure a safe home for your pets."
+        },
+        {
+            title: "Socialization",
+            content: "Expose your pets to different people, animals, and environments early on to help them grow into well-adjusted and confident adults."
+        },
+        {
+            title: "Love and Attention",
+            content: "Spending quality time with your pet strengthens your bond and helps you notice any changes in their behavior or health."
+        },
+        {
+            title: "Flea & Tick Prevention",
+            content: "Use vet-recommended flea and tick preventatives year-round to protect your pet from parasites and related diseases."
+        },
+        {
+            title: "Microchipping",
+            content: "Ensure your pet is microchipped and has an ID tag. This significantly increases the chances of being reunited if they ever get lost."
+        },
+        {
+            title: "Winter Warmth",
+            content: "In cold weather, provide extra bedding and consider a coat for short-haired pets. Limit outdoor time during extreme cold."
+        },
+        {
+            title: "Summer Cooling",
+            content: "Never leave pets in a parked car. On hot days, walk them in the early morning or late evening when the pavement is cool."
+        },
+        {
+            title: "Consistent Training",
+            content: "Use positive reinforcement like treats and praise. Consistency is key to teaching your pet good manners and new tricks."
+        },
+        {
+            title: "Poison Awareness",
+            content: "Be aware of common household items that are toxic to pets, including chocolate, onions, grapes, and certain houseplants like lilies."
+        },
+        {
+            title: "Weight Management",
+            content: "Monitor your pet's weight regularly. Obesity can lead to joint problems, diabetes, and heart disease."
+        },
+        {
+            title: "Ear Cleaning",
+            content: "Check your pet's ears weekly for dirt, redness, or bad odors. Use a vet-approved cleaner to prevent infections."
+        },
+        {
+            title: "Nail Trimming",
+            content: "Keep your pet's nails trimmed. Long nails can be uncomfortable and cause issues with walking or lead to injury."
+        },
+        {
+            title: "Quiet Space",
+            content: "Provide a quiet, comfortable space where your pet can retreat if they feel overwhelmed or tired."
+        },
+        {
+            title: "Spay or Neuter",
+            content: "Talk to your vet about spaying or neutering. It helps prevent certain health issues and contributes to controlling the pet population."
+        }
+    ];
+
+    function generateNewTip() {
+        const randomIndex = Math.floor(Math.random() * petTips.length);
+        const tip = petTips[randomIndex];
+        
+        const container = document.getElementById('tip-card-container');
+        const titleElement = document.getElementById('tip-title');
+        const contentElement = document.getElementById('tip-content');
+        
+        // Add a small fade effect
+        titleElement.parentElement.style.opacity = 0;
+        
+        setTimeout(() => {
+            titleElement.innerText = tip.title;
+            contentElement.innerText = tip.content;
+            titleElement.parentElement.style.opacity = 1;
+            container.classList.add('visible');
+        }, 200);
+    }
+
+    // Initialize with a random tip on load
+    document.addEventListener('DOMContentLoaded', generateNewTip);
+</script>
+{% endblock %}

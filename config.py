@@ -1,8 +1,7 @@
 import os
-
-MYSQL_HOST = 'localhost'
+MYSQL_HOST = 'thomas.proxy.rlwy.net'
 MYSQL_USER = 'root'
-MYSQL_PASSWORD = 'deeparshan@123'
-MYSQL_DATABASE = 'petcareproject_db'
-
+MYSQL_PASSWORD = 'GEjMGRJiTSNgJpXjhOGVSWZgcJacBtEC'
+MYSQL_DATABASE = 'railway'
+MYSQL_PORT = 21502
 SECRET_KEY = 'petcare-secret-key-never-change-this'

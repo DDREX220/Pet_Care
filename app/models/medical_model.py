@@ -1,6 +1,21 @@
 from app.database import Database
 
+
 class MedicalNote:
+
+    @staticmethod
+    def validate(title, description):
+        """Validate medical note input. Returns an error message, or None if valid."""
+        if not title or not title.strip():
+            return "Title is required."
+
+        if not description or not description.strip():
+            return "Description is required."
+
+        if len(title) > 100:
+            return "Title must be under 100 characters."
+
+        return None
 
     @staticmethod
     def add(pet_id, title, description, date):

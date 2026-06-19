@@ -89,4 +89,22 @@ class AuthController:
 
     @login_required
     def dashboard(self):
-        return render_template("dashboard.html")
+        from app.models.pet_model import Pet
+        from app.models.reminder import Reminder
+        from app.models.vaccination_model import Vaccination
+
+        user_id = session.get("user_id")
+        pets = Pet.get_all_by_user(user_id)
+        reminders = Reminder.get_all_by_user(user_id)
+
+        total_vaccinations = 0
+        for pet in pets:
+            vaccinations = Vaccination.get_all_by_pet(pet["id"])
+            total_vaccinations += len(vaccinations)
+
+        return render_template(
+            "dashboard.html",
+            total_pets=len(pets),
+            total_reminders=len(reminders),
+            total_vaccinations=total_vaccinations
+        )

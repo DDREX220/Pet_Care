@@ -3,6 +3,21 @@ from app.database import Database
 class Reminder:
 
     @staticmethod
+    def validate(title, reminder_date):
+        """Validate reminder input. Returns an error message, or None if valid."""
+        from datetime import datetime
+
+        if not title or not title.strip():
+            return "Title is required."
+
+        try:
+            datetime.strptime(reminder_date, "%Y-%m-%d")
+        except (ValueError, TypeError):
+            return "Invalid date format. Use YYYY-MM-DD."
+
+        return None
+
+    @staticmethod
     def add(user_id, title, description, reminder_date):
         """US24 - Add a new reminder for a user."""
         db = Database()

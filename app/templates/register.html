@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PetCare Register</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="auth-page">
+  {% include 'header.html' %}
+
+  <main class="auth-main">
+    <section class="auth-shell container">
+      <div class="auth-copy">
+        <p class="eyebrow">Join PetCare</p>
+        <h1>Create your account and save your pets, notes, and reminders.</h1>
+        <p>
+          Register once and keep your pet care information organized in one place. Your details are stored securely in the app database.
+        </p>
+      </div>
+
+      <div class="auth-card">
+        <h2>Create Account</h2>
+        <p class="auth-subtitle">Fill in your details to register a new account.</p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="auth-flashes">
+              {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        <form class="auth-form" method="post" action="/register">
+          <label>
+            <span>Full Name</span>
+            <input type="text" name="name" placeholder="Your name" required>
+          </label>
+
+          <label>
+            <span>Email</span>
+            <input type="email" name="email" placeholder="you@example.com" required>
+          </label>
+
+          <label>
+            <span>Password</span>
+            <input type="password" name="password" placeholder="Create a password" required>
+          </label>
+
+          <label>
+            <span>Confirm Password</span>
+            <input type="password" name="confirm_password" placeholder="Repeat your password" required>
+          </label>
+
+          <button class="btn btn-solid auth-submit" type="submit">Create Account</button>
+        </form>
+
+        <p class="auth-footer">Already have an account? <a href="/login">Sign In</a></p>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

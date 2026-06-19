@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>PetCare Sign In</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="auth-page">
+	{% include 'header.html' %}
+
+	<main class="auth-main">
+		<section class="auth-shell container">
+			<div class="auth-copy">
+				<p class="eyebrow">Welcome back</p>
+				<h1>Sign in to manage your pets, notes, and community updates.</h1>
+				<p>
+					Keep your pet information in one place, track vaccination reminders, and jump back into the community feed whenever you need it.
+				</p>
+			</div>
+
+			<div class="auth-card">
+				<h2>Sign In</h2>
+				<p class="auth-subtitle">Use your email and password to access your account.</p>
+
+				{% with messages = get_flashed_messages(with_categories=true) %}
+					{% if messages %}
+						<div class="auth-flashes">
+							{% for category, message in messages %}
+								<div class="flash {{ category }}">{{ message }}</div>
+							{% endfor %}
+						</div>
+					{% endif %}
+				{% endwith %}
+
+				<form class="auth-form" method="post" action="/login">
+					<label>
+						<span>Email</span>
+						<input type="email" name="email" placeholder="you@example.com" required>
+					</label>
+
+					<label>
+						<span>Password</span>
+						<input type="password" name="password" placeholder="Enter your password" required>
+					</label>
+
+					<div class="auth-row">
+						<label class="remember-me">
+							<input type="checkbox" name="remember_me">
+							<span>Remember me</span>
+						</label>
+						<a href="#">Forgot password?</a>
+					</div>
+
+					<button class="btn btn-solid auth-submit" type="submit">Sign In</button>
+				</form>
+
+				<p class="auth-footer">Don’t have an account? <a href="/register">Create one</a></p>
+			</div>
+		</section>
+	</main>
+</body>
+</html>

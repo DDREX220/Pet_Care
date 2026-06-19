@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PetCare Services</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="services-page">
+  {% include 'header.html' %}
+
+  <main class="services-page-main">
+    <section class="services-hero container">
+      <p class="eyebrow services-eyebrow">Trusted care, booked by category and location</p>
+      <h1>Our Pet Care Services</h1>
+      <p>
+        Everything your pet needs, all in one place. Browse our comprehensive range of professional pet care services.
+      </p>
+
+      {% set service_query = request.args.get('q', '')|lower %}
+      {% set service_location = request.args.get('location', '') %}
+
+      {% if service_query or service_location %}
+      <div class="services-query-banner" role="status" aria-live="polite">
+        <div>
+          <strong>Showing matches for</strong>
+          <span>
+            {% if service_query %}{{ service_query }}{% endif %}
+            {% if service_query and service_location %} in {% endif %}
+            {% if service_location %}{{ service_location }}{% endif %}
+          </span>
+        </div>
+        <a href="/services">Clear search</a>
+      </div>
+      {% endif %}
+    </section>
+
+    <section class="container services-grid" aria-label="Pet care services">
+      <article class="service-card {% if 'vet' in service_query or 'clinic' in service_query or 'doctor' in service_query %}is-featured{% endif %}">
+        <div class="service-icon icon-blue">&#128657;</div>
+        <h2>Veterinary Care</h2>
+        <p>Find trusted vets near you for regular checkups and emergencies</p>
+        <a href="https://www.google.com/maps/search/?api=1&query=veterinary+care+{{ service_location|replace(' ', '+') if service_location else 'near+me' }}" target="_blank" rel="noreferrer">Find nearby &#8594;</a>
+      </article>
+
+      <article class="service-card {% if 'groom' in service_query %}is-featured{% endif %}">
+        <div class="service-icon icon-gold">&#9986;</div>
+        <h2>Grooming</h2>
+        <p>Professional grooming services to keep your pet looking their best</p>
+        <a href="https://www.google.com/maps/search/?api=1&query=pet+grooming+{{ service_location|replace(' ', '+') if service_location else 'near+me' }}" target="_blank" rel="noreferrer">Book nearby &#8594;</a>
+      </article>
+
+      <article class="service-card {% if 'sit' in service_query or 'boarding' in service_query %}is-featured{% endif %}">
+        <div class="service-icon icon-green">&#8962;</div>
+        <h2>Pet Sitting</h2>
+        <p>Reliable pet sitters for when you're away from home</p>
+        <a href="/community">See community picks &#8594;</a>
+      </article>
+
+      <article class="service-card {% if 'train' in service_query %}is-featured{% endif %}">
+        <div class="service-icon icon-orange">&#127891;</div>
+        <h2>Training</h2>
+        <p>Expert trainers to help your pet learn and grow</p>
+        <a href="https://www.google.com/maps/search/?api=1&query=dog+training+{{ service_location|replace(' ', '+') if service_location else 'near+me' }}" target="_blank" rel="noreferrer">Find classes &#8594;</a>
+      </article>
+
+      <article class="service-card {% if 'photo' in service_query %}is-featured{% endif %}">
+        <div class="service-icon icon-red">&#128247;</div>
+        <h2>Photography</h2>
+        <p>Capture precious moments with professional pet photography</p>
+        <a href="/community">View examples &#8594;</a>
+      </article>
+
+      <article class="service-card {% if 'suppl' in service_query or 'food' in service_query or 'toy' in service_query %}is-featured{% endif %}">
+        <div class="service-icon icon-gold">&#128717;</div>
+        <h2>Pet Supplies</h2>
+        <p>Quality food, toys, and accessories for your furry friends</p>
+        <a href="https://www.google.com/maps/search/?api=1&query=pet+supplies+{{ service_location|replace(' ', '+') if service_location else 'near+me' }}" target="_blank" rel="noreferrer">Shop nearby &#8594;</a>
+      </article>
+    </section>
+  </main>
+</body>
+</html>

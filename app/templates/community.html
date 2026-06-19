@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PetCare Community</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="community-page">
+  {% include 'header.html' %}
+
+  <main class="community-main">
+    <section class="community-hero container">
+      <div>
+        <p class="eyebrow community-eyebrow">Share updates, advice, and adoption stories</p>
+        <h1>Community Feed</h1>
+        <p>Post adoption stories, care tips, questions, and any pet-related occasion. The feed stays responsive and easy to browse on every device.</p>
+      </div>
+      <a class="create-post" href="#create-post">Create Post</a>
+    </section>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <section class="container flash-stack community-flash-stack">
+          {% for category, message in messages %}
+            <div class="flash {{ category }}">{{ message }}</div>
+          {% endfor %}
+        </section>
+      {% endif %}
+    {% endwith %}
+
+    <section class="container community-layout">
+      <div class="feed-column">
+        <section id="create-post" class="post-card community-composer">
+          <div class="section-head">
+            <div>
+              <span class="results-kicker">Create a post</span>
+              <h2>Publish an adoption story, tip, or update</h2>
+            </div>
+            <span class="composer-note">Photos are optional</span>
+          </div>
+
+          {% if session.get('user_name') %}
+            <form class="community-form" method="post" action="/community" enctype="multipart/form-data">
+              <div class="composer-grid">
+                <label>
+                  <span>Category</span>
+                  <select name="category" required>
+                    <option value="adoption">Adoption</option>
+                    <option value="tips">Tips</option>
+                    <option value="occasion">Occasion</option>
+                    <option value="question">Question</option>
+                    <option value="update">Update</option>
+                  </select>
+                </label>
+                <label>
+                  <span>Title</span>
+                  <input type="text" name="title" placeholder="Share your story or tip" required>
+                </label>
+                <label class="full-width">
+                  <span>Location</span>
+                  <input type="text" name="location" placeholder="Brooklyn, NY">
+                </label>
+                <label class="full-width">
+                  <span>Photo</span>
+                  <input type="file" name="photo" accept="image/*">
+                </label>
+                <label class="full-width">
+                  <span>Post</span>
+                  <textarea name="content" rows="5" placeholder="Tell the community what’s happening" required></textarea>
+                </label>
+              </div>
+              <div class="composer-actions">
+                <button class="search-button" type="submit">Publish Post</button>
+              </div>
+            </form>
+          {% else %}
+            <div class="login-needed-panel community-login-panel">
+              <h3>Sign in to post</h3>
+              <p>You can browse the community feed without an account, but posting requires signing in.</p>
+              <a class="btn btn-solid" href="/login">Sign in to continue</a>
+            </div>
+          {% endif %}
+        </section>
+
+        <section class="feed-stack">
+          <div class="feed-header">
+            <div>
+              <span class="results-kicker">Recent posts</span>
+              <h2>Community activity</h2>
+            </div>
+            <p>Latest posts from your community.</p>
+          </div>
+
+          <div class="community-feed-grid">
+            {% for post in posts or [] %}
+              <article class="post-card community-post-card">
+                <div class="post-head">
+                  <div class="author-block">
+                    {% if post.author_photo %}
+                      {% set author_avatar = post.author_photo %}
+                      {% if not author_avatar.startswith('http://') and not author_avatar.startswith('https://') %}
+                        {% set author_avatar = url_for('static', filename=author_avatar) %}
+                      {% endif %}
+                      <img class="avatar" src="{{ author_avatar }}" alt="{{ post.author_name }} avatar">
+                    {% else %}
+                      <div class="avatar avatar-fallback">{{ post.author_name[:1] }}</div>
+                    {% endif %}
+                    <div>
+                      <h2>{{ post.author_name }}</h2>
+                      <span>{{ post.created_at }}</span>
+                    </div>
+                  </div>
+                  <div class="post-actions">
+                    <span class="post-badge {{ post.category }}">{{ post.category|replace('_', ' ')|title }}</span>
+                    {% if session.get('user_id') and session.get('user_id') == post.user_id %}
+                      <form method="post" action="{{ url_for('delete_community_post', post_id=post.id) }}" onsubmit="return confirm('Delete this post?');">
+                        <button class="post-delete-btn" type="submit">Delete</button>
+                      </form>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <h3 class="community-post-title">{{ post.title }}</h3>
+                <p class="post-text">{{ post.content }}</p>
+                {% if post.location %}
+                  <div class="post-location">📍 {{ post.location }}</div>
+                {% endif %}
+                {% if post.photo_url %}
+                  {% set post_image = post.photo_url %}
+                  {% if not post_image.startswith('http://') and not post_image.startswith('https://') %}
+                    {% set post_image = url_for('static', filename=post_image) %}
+                  {% endif %}
+                  <div class="post-image-wrap">
+                    <img src="{{ post_image }}" alt="{{ post.title }}">
+                  </div>
+                {% endif %}
+              </article>
+            {% else %}
+              <div class="empty-state">No community posts yet. Be the first to share an adoption story or a tip.</div>
+            {% endfor %}
+          </div>
+        </section>
+      </div>
+
+      <aside class="sidebar-column">
+        <section class="topics-card">
+          <h2>Trending Topics</h2>
+          <ul>
+            <li>#PetAdoption Tips</li>
+            <li>#DogTraining</li>
+            <li>#CatHealth</li>
+            <li>#PetPhotography</li>
+          </ul>
+        </section>
+
+        {% if not session.get('user_name') %}
+          <section class="join-card">
+            <h2>Join Our Community</h2>
+            <p>Connect with pet lovers, ask questions, and share useful updates in one place.</p>
+            <a href="/register" class="join-button">Sign Up Free</a>
+          </section>
+        {% endif %}
+      </aside>
+    </section>
+  </main>
+</body>
+</html>

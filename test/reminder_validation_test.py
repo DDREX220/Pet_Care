@@ -1,3 +1,4 @@
+"""Unit tests for Reminder.validate() - Sprint 3."""
 import unittest
 from app.models.reminder import Reminder
 

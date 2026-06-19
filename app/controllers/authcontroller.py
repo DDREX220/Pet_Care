@@ -12,7 +12,9 @@ class AuthController:
             if user and User.check_password(user['password'], password):
                 session['user_id'] = user['id']
                 session['name'] = user['name']
+                session['user_name'] = user['name']
                 session['role'] = user['role']
+                session['is_admin'] = (user['role'] == 'admin')
                 flash(f"Welcome back, {user['name']}!", "success")
                 return redirect(url_for("auth.profile"))
             else:
@@ -54,6 +56,7 @@ class AuthController:
             try:
                 User.update_profile(user_id, name, email)
                 session['name'] = name
+                session['user_name'] = name
                 flash("Profile updated successfully!", "success")
             except Exception as e:
                 flash("Error updating profile. Email might already be in use.", "danger")

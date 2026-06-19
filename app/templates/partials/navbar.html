@@ -10,6 +10,13 @@
       <a href="{{ url_for('auth.dashboard') }}">Dashboard</a>
       <a href="{{ url_for('pets.view_pets') }}">My Pets</a>
       <a href="{{ url_for('lost_found.view_lost') }}">Lost & Found</a>
+      {% if session.get('user_id') %}
+        <a href="{{ url_for('reminders.view_reminders') }}">Reminders</a>
+      {% endif %}
+      <a href="{{ url_for('tips.view_tips') }}">Tips</a>
+      {% if session.get('role') == 'admin' %}
+        <a href="{{ url_for('admin.view_users') }}" style="color: var(--primary-dark); font-weight: bold;">Admin Panel</a>
+      {% endif %}
       <a href="{{ url_for('auth.profile') }}">Profile</a>
     </div>
   </div>

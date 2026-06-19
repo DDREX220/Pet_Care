@@ -35,6 +35,9 @@
       <a href="/pet-care-tips">Pet Care Tips</a>
       <a href="/dashboard">Dashboard</a>
       <a href="/my-note">My Note</a>
+      {% if session.get('user_name') %}
+        <a href="/reminders">Reminders</a>
+      {% endif %}
       <div class="mobile-nav-actions">
         {% if session.get('user_name') %}
           <a class="btn btn-outline" href="/dashboard">Profile</a>

@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div style="max-width: 800px; margin: 0 auto;">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 25px;">
+            <a href="{{ url_for('tips.view_tips') }}" style="color: var(--muted); font-size: 1.2rem; transition: color 0.2s ease;">
+                <i class="fa-solid fa-arrow-left"></i> Back to Tips
+            </a>
+        </div>
+
+        {% if tip %}
+            <div class="panel" style="padding: 40px; border: 2px solid #edd08a;">
+                <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 20px;">
+                    <span style="font-size: 0.85rem; background: #fff7e3; padding: 6px 12px; border-radius: 20px; font-weight: 600; color: var(--primary-dark); border: 1px solid var(--line);">
+                        {{ tip.category or "General" }}
+                    </span>
+                </div>
+                <h1 style="color: var(--primary-dark); font-size: 2.2rem; margin-bottom: 25px; font-weight: 800;">
+                    {{ tip.title }}
+                </h1>
+                
+                <div style="color: var(--text-color); font-size: 1.1rem; line-height: 1.8; white-space: pre-line; margin-bottom: 30px;">
+                    {{ tip.content }}
+                </div>
+
+                <div style="border-top: 1px solid #eee; padding-top: 25px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                    <div style="display: flex; gap: 10px; align-items: center; color: var(--muted); font-size: 0.95rem;">
+                        <i class="fa-regular fa-lightbulb" style="color: var(--primary); font-size: 1.2rem;"></i>
+                        <span>Implementing these steps helps keep your pet happy & active.</span>
+                    </div>
+                    <a href="{{ url_for('tips.view_tips') }}" class="post-btn">
+                        Explore More Tips
+                    </a>
+                </div>
+            </div>
+        {% else %}
+            <div class="panel" style="text-align: center; padding: 60px 40px;">
+                <div style="font-size: 60px; margin-bottom: 20px;">❓</div>
+                <h3 style="margin-bottom: 10px; color: var(--text);">Tip not found</h3>
+                <p style="color: var(--muted); max-width: 400px; margin: 0 auto 30px;">
+                    The tip details you are looking for might have been removed or do not exist.
+                </p>
+                <a href="{{ url_for('tips.view_tips') }}" class="post-btn">Return to Tips List</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div style="max-width: 600px; margin: 0 auto;">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
+            <a href="{{ url_for('reminders.view_reminders') }}" style="color: var(--muted); font-size: 1.2rem; transition: color 0.2s ease;">
+                <i class="fa-solid fa-arrow-left"></i>
+            </a>
+            <h1 style="margin: 0;">Add Reminder ⏰</h1>
+        </div>
+        <p class="dashboard-text">Set a reminder to get notified about important tasks for your pets.</p>
+
+        <div class="panel">
+            <form action="{{ url_for('reminders.add_reminder') }}" method="POST">
+                <div style="margin-bottom: 20px;">
+                    <label for="title">Reminder Title <span style="color: #b42318;">*</span></label>
+                    <input type="text" id="title" name="title" placeholder="e.g., Vet Appointment, Feed Max, Give Medicine" required>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label for="reminder_date">Reminder Date <span style="color: #b42318;">*</span></label>
+                    <input type="date" id="reminder_date" name="reminder_date" required>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label for="description">Description / Notes</label>
+                    <textarea id="description" name="description" placeholder="Add details like location, dosage, or specific instructions..." rows="4"></textarea>
+                </div>
+
+                <div class="actions" style="margin-top: 30px;">
+                    <button type="submit" class="post-btn" style="cursor: pointer; padding: 12px 28px;">
+                        <i class="fa-solid fa-bell"></i> Save Reminder
+                    </button>
+                    <a href="{{ url_for('reminders.view_reminders') }}" class="button-link">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

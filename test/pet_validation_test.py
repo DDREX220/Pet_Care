@@ -1,3 +1,4 @@
+"""Unit tests for Pet.validate() - Sprint 2."""
 import unittest
 from app.models.pet_model import Pet
 

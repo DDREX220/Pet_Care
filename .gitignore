@@ -1,9 +1,5 @@
-__pycache__/
-*.py[cod]
-*$py.class
-venv/
+﻿__pycache__/
+*.pyc
+*.pyo
 .env
-petcare_auth.db
-*.log
-.vscode/
-.idea/
+venv/

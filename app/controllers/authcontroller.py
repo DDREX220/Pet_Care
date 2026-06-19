@@ -14,7 +14,7 @@ class AuthController:
                 session['name'] = user['name']
                 session['role'] = user['role']
                 flash(f"Welcome back, {user['name']}!", "success")
-                return redirect(url_for("pets.view_pets"))
+                return redirect(url_for("auth.profile"))
             else:
                 flash("Invalid email or password.", "danger")
         
@@ -25,11 +25,6 @@ class AuthController:
             name = request.form.get("name")
             email = request.form.get("email")
             password = request.form.get("password")
-            confirm_password = request.form.get("confirm_password")
-            
-            if password != confirm_password:
-                flash("Passwords do not match.", "danger")
-                return render_template("register.html")
             
             if User.get_by_email(email):
                 flash("Email already registered.", "danger")
@@ -56,9 +51,13 @@ class AuthController:
             name = request.form.get("name")
             email = request.form.get("email")
             
-            User.update_profile(user_id, name, email)
-            session['name'] = name
-            flash("Profile updated successfully!", "success")
+            try:
+                User.update_profile(user_id, name, email)
+                session['name'] = name
+                flash("Profile updated successfully!", "success")
+            except Exception as e:
+                flash("Error updating profile. Email might already be in use.", "danger")
+            
             return redirect(url_for("auth.profile"))
             
         return render_template("profile.html", user=user)
@@ -66,15 +65,15 @@ class AuthController:
     @login_required
     def reset_password(self):
         if request.method == "POST":
-            old_password = request.form.get("old_password")
+            email = request.form.get("email")
             new_password = request.form.get("new_password")
             confirm_password = request.form.get("confirm_password")
             
             user_id = session.get("user_id")
             user = User.get_by_id(user_id)
             
-            if not User.check_password(user['password'], old_password):
-                flash("Incorrect old password.", "danger")
+            if user['email'] != email:
+                flash("Email does not match your account.", "danger")
                 return render_template("reset_password.html")
                 
             if new_password != confirm_password:

@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="text-align: center; padding: 100px 20px;">
+    <h1>403</h1>
+    <h2>Forbidden</h2>
+    <p>You don't have permission to access this page.</p>
+    <a href="{{ url_for('home') }}" class="secondary-button">Go Home</a>
+</div>
+{% endblock %}

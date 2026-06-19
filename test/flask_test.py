@@ -1,3 +1,4 @@
+"""Unit tests for login_required decorator - Sprint 1."""
 import unittest
 from flask import Flask, Blueprint
 from app.auth import login_required

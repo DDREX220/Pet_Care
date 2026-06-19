@@ -18,3 +18,10 @@ This folder contains SQL scripts for the Pet Care project.
 ## Database
 - Database name: `CLASS_DB`
 - Connection: localhost 
+
+## Running Tests
+
+Run all tests:
+```
+python -m pytest test/
+```

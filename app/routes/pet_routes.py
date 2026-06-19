@@ -27,4 +27,9 @@ class PetRoutes:
             view_func=self.controller.delete_pet,
             methods=["POST"]
         )
+        self.bp.add_url_rule(
+            "/pets/search",
+            view_func=self.controller.search_pets,
+            methods=["GET"]
+        )
         return self.bp

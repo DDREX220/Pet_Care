@@ -81,3 +81,15 @@ class PetController:
         Pet.delete(pet_id)
         flash("Pet deleted successfully!", "success")
         return redirect(url_for("pets.view_pets"))
+
+    @login_required
+    def search_pets(self):
+        user_id = session.get("user_id")
+        keyword = request.args.get("name", "")
+
+        if keyword:
+            pets = Pet.search_pets_by_name(user_id, keyword)
+        else:
+            pets = Pet.get_all_by_user(user_id)
+
+        return render_template("pets/view_pets.html", pets=pets, search_keyword=keyword)

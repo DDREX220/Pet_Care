@@ -1,4 +1,5 @@
 from app.database import Database
+from datetime import datetime, date
 
 class Vaccination:
     def __init__(self, pet_id, vaccine_name, date_given, next_due_date=None, notes=None):
@@ -7,6 +8,22 @@ class Vaccination:
         self.date_given = date_given
         self.next_due_date = next_due_date
         self.notes = notes
+
+    @staticmethod
+    def validate(vaccine_name, date_given):
+        """Validate vaccination input. Returns an error message, or None if valid."""
+        if not vaccine_name or not vaccine_name.strip():
+            return "Vaccine name is required."
+
+        try:
+            given = datetime.strptime(date_given, "%Y-%m-%d").date()
+        except (ValueError, TypeError):
+            return "Invalid date format. Use YYYY-MM-DD."
+
+        if given > date.today():
+            return "Vaccination date cannot be in the future."
+
+        return None
 
     def save(self):
         db = Database()

@@ -40,6 +40,21 @@ def create_app():
     app.register_blueprint(admin_routes.register())
 
     # Static routes
+    @app.route("/community")
+    def community():
+        return render_template("community.html")
+
+    @app.route("/services")
+    def services():
+        return render_template("services.html")
+
+    @app.route("/pet-care-tips")
+    def pet_care_tips():
+        return render_template("pet_care_tips.html")
+
+    @app.route("/my-note")
+    def my_note():
+        return render_template("my_note.html")
     @app.route("/")
     def home():
         return render_template("home.html")

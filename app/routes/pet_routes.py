@@ -27,4 +27,4 @@ class PetRoutes:
             view_func=self.controller.search_pets,
             methods=["GET"]
         )
-        return self.bpgit
+        return self.bp

@@ -1,3 +1,4 @@
+"""Unit tests for MedicalNote.validate() - Sprint 3."""
 import unittest
 from app.models.medical_model import MedicalNote
 

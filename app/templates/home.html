@@ -1,187 +1,312 @@
-{% extends "base.html" %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PetCare</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="home-page" id="top">
+  {% include 'header.html' %}
 
-{% block head %}
-<style>
-    .hero {
-      width: 100%;
-      min-height: calc(100vh - 80px);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 58px 40px 40px;
-      text-align: center;
-    }
+  <main class="hero-shell">
+    <div class="hero-shell-glow hero-shell-glow-one"></div>
+    <div class="hero-shell-glow hero-shell-glow-two"></div>
+    <section class="hero container">
+      <div class="hero-left">
+        <!-- <p class="eyebrow">Smart search for pets, care, and rescue support</p> -->
+        <h1>Find Your Perfect Pet Companion</h1>
+        <p>
+          Connect with pet lovers, find lost pets, adopt new friends, and access trusted pet care services all in one place.
+        </p>
 
-    .hero-left {
-      width: 100%;
-      max-width: 800px;
-      padding-top: 18px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .hero-left h1 {
-      font-size: 56px;
-      line-height: 1.15;
-      color: #fff;
-      font-weight: 800;
-      margin-bottom: 28px;
-    }
-
-    .hero-left p {
-      font-size: 22px;
-      line-height: 1.7;
-      color: #fff;
-      font-weight: 300;
-      margin-bottom: 36px;
-    }
-
-    .search-card {
-      width: 100%;
-      background: #fff;
-      border-radius: 22px;
-      padding: 24px 24px 22px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-      text-align: left;
-      color: #111;
-    }
-
-    .tabs {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      margin-bottom: 18px;
-      flex-wrap: wrap;
-    }
-
-    .tab {
-      font-size: 18px;
-      font-weight: 600;
-      color: #222;
-      padding: 12px 18px;
-      border-radius: 10px;
-      background: #f5f5f5;
-    }
-
-    .active-tab {
-      background: #f4bc53;
-    }
-
-    .line {
-      width: 100%;
-      height: 1px;
-      background: #ddd;
-      margin-bottom: 18px;
-    }
-
-    .inputs {
-      display: flex;
-      gap: 18px;
-      margin-bottom: 18px;
-    }
-
-    .input-box {
-      flex: 1;
-      min-width: 0;
-      height: 48px;
-      border: 1px solid #ddd;
-      border-radius: 12px;
-      background: #fafafa;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 0 18px;
-      color: #777;
-      font-size: 16px;
-    }
-
-    .search-btn {
-      width: 100%;
-      height: 46px;
-      border: none;
-      border-radius: 12px;
-      background: #f4bc53;
-      font-size: 18px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: 0.2s ease;
-    }
-
-    .stats {
-      display: flex;
-      gap: 60px;
-      margin-top: 42px;
-    }
-
-    .stat h2 {
-      color: #fff;
-      font-size: 48px;
-      font-weight: 800;
-      line-height: 1;
-    }
-
-    .stat p {
-      color: #fff;
-      font-size: 20px;
-      font-weight: 300;
-      margin-top: 6px;
-    }
-
-    @media (max-width: 768px) {
-      .hero-left h1 { font-size: 36px; }
-      .stats { flex-direction: column; gap: 20px; }
-      .inputs { flex-direction: column; }
-    }
-</style>
-{% endblock %}
-
-{% block full_content %}
-  <section class="hero">
-    <div class="hero-left">
-      <h1>Find Your Perfect Pet Companion</h1>
-      <p>Connect with pet lovers, find lost pets, adopt new friends, and access trusted pet care services all in one place.</p>
-
-      <div class="search-card">
-        <div class="tabs">
-          <div class="tab active-tab">Adopt</div>
-          <div class="tab">Lost & Found</div>
-          <div class="tab">Services</div>
-        </div>
-
-        <div class="line"></div>
-
-        <div class="inputs">
-          <div class="input-box">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <span>Search for pets...</span>
+        <div class="search-card" id="search-card">
+          <div class="search-tabs" role="tablist" aria-label="Search categories">
+            <button class="tab active" type="button" data-mode="adopt">Adopt</button>
+            <button class="tab" type="button" data-mode="lost-found">Lost &amp; Found</button>
+            <button class="tab" type="button" data-mode="services">Services</button>
           </div>
 
-          <div class="input-box">
-            <i class="fa-solid fa-location-dot"></i>
-            <span>Location</span>
+          <form id="home-search-form" class="home-search-form">
+            <div class="search-fields">
+              <label class="field">
+                <span class="field-icon">&#128269;</span>
+                <input id="search-query" type="text" placeholder="Search for pets, care, or rescue help" aria-label="Search for pets, care, or rescue help" autocomplete="off">
+              </label>
+              <label class="field">
+                <span class="field-icon">&#128205;</span>
+                <input id="search-location" type="text" placeholder="Location" aria-label="Location" autocomplete="off" list="location-suggestions">
+              </label>
+            </div>
+
+            <datalist id="location-suggestions">
+              <option value="Kathmandu, Nepal"></option>
+              <option value="Pokhara, Nepal"></option>
+              <option value="Jhapa, Nepal"></option>
+              <option value="Bhaktapur, Nepal"></option>
+              <option value="Lalitpur, Nepal"></option>
+            </datalist>
+
+            <div class="search-recommendations" aria-label="Search recommendations">
+              <div class="recommendation-header">
+                <span>Recommended searches</span>
+                <button id="clear-search" class="link-button" type="button">Reset</button>
+              </div>
+              <div id="search-chip-group" class="chip-group"></div>
+              <div id="location-chip-group" class="chip-group chip-group-muted"></div>
+            </div>
+
+            <div class="search-actions">
+              <button class="search-button" type="submit">Search Now</button>
+              <a class="ghost-button" href="/lost-found">Lost &amp; Found</a>
+              <a class="ghost-button" href="/services">Services</a>
+            </div>
+          </form>
+
+          <div class="search-results-panel" aria-live="polite">
+            <div class="results-header">
+              <div>
+                <span class="results-kicker">Live matches</span>
+                <h2>Recommended results</h2>
+              </div>
+              <div id="results-count" class="results-count"></div>
+            </div>
+            <div id="results-list" class="results-list"></div>
+          </div>
+        </div>
+                
+
+      </div>
+      <div class="hero-right">
+        <div class="hero-image-card">
+          <img src="https://images.unsplash.com/photo-1517423440428-a5a00ad493e8?auto=format&fit=crop&w=1200&q=80" alt="Happy dog">
+          <div class="hero-floating-orbit hero-floating-orbit-one"></div>
+          <div class="hero-floating-orbit hero-floating-orbit-two"></div>
+        </div>
+
+        <div class="floating-badge">
+          <div class="badge-icon">&#128062;</div>
+          <div>
+            <strong>Max found!</strong>
+            <span>Reunited today</span>
           </div>
         </div>
 
-        <button class="search-btn" type="button">Search Now</button>
-      </div>
-
-      <div class="stats">
-        <div class="stat">
-          <h2>10K+</h2>
-          <p>Happy Pets</p>
-        </div>
-
-        <div class="stat">
-          <h2>5K+</h2>
-          <p>Adoptions</p>
-        </div>
-
-        <div class="stat">
-          <h2>500+</h2>
-          <p>Services</p>
+        <div class="mini-map-card">
+          <div class="mini-map-header">
+            <div>
+              <span class="results-kicker">Map location</span>
+              <strong id="map-location-label">Brooklyn, NY</strong>
+            </div>
+            <a id="map-view-link" href="https://www.google.com/maps/place/Nepal/@28.3719927,81.4893377,879256m/data=!3m2!1e3!4b1!4m6!3m5!1s0x3995e8c77d2e68cf:0x34a29abcd0cc86de!8m2!3d28.394857!4d84.124008!16zL20vMDE2end0?entry=ttu&g_ep=EgoyMDI2MDYxMy4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noreferrer">Open map</a>
+          </div>
+          <iframe
+            id="map-frame"
+            title="Map preview"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            src="https://www.google.com/maps?q=Brooklyn%2C%20NY&output=embed"
+          ></iframe>
         </div>
       </div>
-    </div>
-  </section>
-{% endblock %}
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      const tabs = Array.from(document.querySelectorAll('.tab[data-mode]'));
+      const searchForm = document.getElementById('home-search-form');
+      const searchQuery = document.getElementById('search-query');
+      const searchLocation = document.getElementById('search-location');
+      const resultsList = document.getElementById('results-list');
+      const resultsCount = document.getElementById('results-count');
+      const searchChipGroup = document.getElementById('search-chip-group');
+      const locationChipGroup = document.getElementById('location-chip-group');
+      const mapFrame = document.getElementById('map-frame');
+      const mapLocationLabel = document.getElementById('map-location-label');
+      const mapViewLink = document.getElementById('map-view-link');
+      const clearSearch = document.getElementById('clear-search');
+      const quickScrollButton = document.querySelector('.search-pill');
+
+      const searchTerms = ['Golden Retriever', 'Lost Cat', 'Vet Visit', 'Pet Sitting', 'Grooming', 'Training'];
+      const locations = ['Brooklyn, NY', 'Queens, NY', 'Central Park, NY', 'Manhattan, NY', 'Jersey City, NJ', 'Downtown, NYC'];
+
+      const entries = [
+        {
+          mode: 'adopt',
+          title: 'Golden Retriever Puppies',
+          description: 'Friendly family dogs ready for adoption and first-time owners.',
+          location: 'Brooklyn, NY',
+          route: '/community',
+          accent: 'Adoption',
+        },
+        {
+          mode: 'adopt',
+          title: 'Playful Tabby Cat',
+          description: 'Calm indoor cat with a curious personality and soft coat.',
+          location: 'Queens, NY',
+          route: '/community',
+          accent: 'Adoption',
+        },
+        {
+          mode: 'lost-found',
+          title: 'Charlie the Retriever',
+          description: 'Recently reported lost near the park with a red collar.',
+          location: 'Central Park, NY',
+          route: '/lost-found',
+          accent: 'Lost',
+        },
+        {
+          mode: 'lost-found',
+          title: 'Mittens the Tabby',
+          description: 'Found cat waiting for a verified owner match.',
+          location: 'Brooklyn, NY',
+          route: '/lost-found',
+          accent: 'Found',
+        },
+        {
+          mode: 'services',
+          title: 'Veterinary Care',
+          description: 'Book checkups, vaccines, and urgent support nearby.',
+          location: 'Manhattan, NY',
+          route: '/services',
+          accent: 'Service',
+        },
+        {
+          mode: 'services',
+          title: 'Grooming and Pet Sitting',
+          description: 'Trusted care for grooming, boarding, and in-home visits.',
+          location: 'Downtown, NYC',
+          route: '/services',
+          accent: 'Service',
+        },
+      ];
+
+      let activeMode = 'adopt';
+
+      const normalize = (value) => value.trim().toLowerCase();
+
+      const mapEmbedUrl = (location) => `https://www.google.com/maps?q=${encodeURIComponent(location)}&output=embed`;
+      const mapLinkUrl = (location) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location)}`;
+
+      const setMap = (location) => {
+        const selected = location || 'Brooklyn, NY';
+        mapFrame.src = mapEmbedUrl(selected);
+        mapLocationLabel.textContent = selected;
+        mapViewLink.href = mapLinkUrl(selected);
+      };
+
+      const matchesQuery = (entry, query) => {
+        if (!query) {
+          return true;
+        }
+
+        const haystack = [entry.title, entry.description, entry.location, entry.accent, entry.mode].join(' ').toLowerCase();
+        return query.split(/\s+/).every((piece) => haystack.includes(piece));
+      };
+
+      const renderResults = () => {
+        const query = normalize(searchQuery.value);
+        const location = normalize(searchLocation.value);
+
+        const filtered = entries.filter((entry) => entry.mode === activeMode && matchesQuery(entry, query) && (!location || entry.location.toLowerCase().includes(location)));
+        const visible = filtered.length > 0 ? filtered : entries.filter((entry) => entry.mode === activeMode).slice(0, 3);
+
+        resultsCount.textContent = `${visible.length} result${visible.length === 1 ? '' : 's'}`;
+        resultsList.innerHTML = visible.map((entry) => `
+          <a class="result-card" href="${entry.route}?q=${encodeURIComponent(searchQuery.value.trim())}&location=${encodeURIComponent(searchLocation.value.trim())}">
+            <span class="result-accent">${entry.accent}</span>
+            <h3>${entry.title}</h3>
+            <p>${entry.description}</p>
+            <div class="result-meta">📍 ${entry.location}</div>
+            <span class="result-link">Open ${entry.accent === 'Service' ? 'services' : entry.accent === 'Lost' ? 'lost &amp; found' : 'adoption'} →</span>
+          </a>
+        `).join('');
+
+        setMap(searchLocation.value.trim() || visible[0]?.location || 'Brooklyn, NY');
+      };
+
+      const setActiveMode = (mode) => {
+        activeMode = mode;
+        tabs.forEach((tab) => tab.classList.toggle('active', tab.dataset.mode === mode));
+        renderResults();
+      };
+
+      const fillChipGroup = (group, items, kind) => {
+        group.innerHTML = items.map((item) => `<button class="chip" type="button" data-${kind}="${item}">${item}</button>`).join('');
+      };
+
+      searchChipGroup.addEventListener('click', (event) => {
+        const button = event.target.closest('button[data-search]');
+        if (!button) {
+          return;
+        }
+
+        searchQuery.value = button.dataset.search || '';
+        renderResults();
+      });
+
+      locationChipGroup.addEventListener('click', (event) => {
+        const button = event.target.closest('button[data-location]');
+        if (!button) {
+          return;
+        }
+
+        searchLocation.value = button.dataset.location || '';
+        renderResults();
+      });
+
+      tabs.forEach((tab) => {
+        tab.addEventListener('click', () => setActiveMode(tab.dataset.mode || 'adopt'));
+      });
+
+      searchForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+
+        const params = new URLSearchParams();
+        const query = searchQuery.value.trim();
+        const location = searchLocation.value.trim();
+
+        if (query) {
+          params.set('q', query);
+        }
+        if (location) {
+          params.set('location', location);
+        }
+
+        if (activeMode === 'services') {
+          window.location.href = `/services${params.toString() ? `?${params.toString()}` : ''}`;
+          return;
+        }
+
+        if (activeMode === 'lost-found') {
+          window.location.href = `/lost-found${params.toString() ? `?${params.toString()}` : ''}`;
+          return;
+        }
+
+        renderResults();
+        document.querySelector('.search-results-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+
+      searchQuery.addEventListener('input', renderResults);
+      searchLocation.addEventListener('input', renderResults);
+
+      clearSearch.addEventListener('click', () => {
+        searchQuery.value = '';
+        searchLocation.value = '';
+        setActiveMode('adopt');
+      });
+
+      quickScrollButton.addEventListener('click', () => {
+        document.getElementById('search-card').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
+
+      fillChipGroup(searchChipGroup, searchTerms, 'search');
+      fillChipGroup(locationChipGroup, locations, 'location');
+      renderResults();
+    })();
+  </script>
+</body>
+</html>

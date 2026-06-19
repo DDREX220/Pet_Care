@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PetCare My Note</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="my-note-page">
+  {% include 'header.html' %}
+
+  <main class="my-note-main">
+    <section class="my-note-hero container">
+      <div>
+        <h1>My Note</h1>
+        <p>Save your pet details, pictures, and reminders like vaccination dates in one place.</p>
+      </div>
+    </section>
+
+    <section class="container my-note-layout">
+      <form class="note-form card-panel" id="noteForm">
+        <h2>Add a Pet</h2>
+        <div class="form-grid">
+          <label>
+            <span>Pet Name</span>
+            <input type="text" id="petName" placeholder="e.g. Luna" required>
+          </label>
+          <label>
+            <span>Species</span>
+            <select id="petSpecies" required>
+              <option value="Dog">Dog</option>
+              <option value="Cat">Cat</option>
+              <option value="Hamster">Hamster</option>
+              <option value="Parrot">Parrot</option>
+              <option value="Rabbit">Rabbit</option>
+              <option value="Other">Other</option>
+            </select>
+          </label>
+          <label>
+            <span>Age</span>
+            <input type="text" id="petAge" placeholder="e.g. 2 years" required>
+          </label>
+          <label>
+            <span>Vaccination Date</span>
+            <input type="date" id="petVaccine" required>
+          </label>
+          <label class="full-width">
+            <span>Picture</span>
+            <input type="file" id="petPhoto" accept="image/*">
+          </label>
+          <label class="full-width">
+            <span>Notes</span>
+            <textarea id="petNotes" rows="5" placeholder="Food routine, behavior notes, vet reminders, medication, grooming..." required></textarea>
+          </label>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-solid">Add Pet Note</button>
+          <button type="button" class="btn btn-outline" id="clearForm">Clear</button>
+        </div>
+      </form>
+
+      <section class="notes-panel">
+        <div class="notes-header">
+          <h2>Your Pet Notes</h2>
+          <p id="noteCount">0 pets saved</p>
+        </div>
+        <div id="notesList" class="notes-list"></div>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    const storageKey = 'petcare_my_notes';
+    const noteForm = document.getElementById('noteForm');
+    const clearFormButton = document.getElementById('clearForm');
+    const notesList = document.getElementById('notesList');
+    const noteCount = document.getElementById('noteCount');
+    const petPhotoInput = document.getElementById('petPhoto');
+
+    let selectedPhoto = '';
+
+    function loadNotes() {
+      try {
+        return JSON.parse(localStorage.getItem(storageKey) || '[]');
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function saveNotes(notes) {
+      localStorage.setItem(storageKey, JSON.stringify(notes));
+    }
+
+    function setCounter(notes) {
+      noteCount.textContent = `${notes.length} pet${notes.length === 1 ? '' : 's'} saved`;
+    }
+
+    function escapeHtml(text) {
+      return String(text)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+    }
+
+    function renderNotes() {
+      const notes = loadNotes();
+      setCounter(notes);
+
+      if (!notes.length) {
+        notesList.innerHTML = '<div class="empty-state">No pet notes yet. Add your first pet above.</div>';
+        return;
+      }
+
+      notesList.innerHTML = notes.map((note, index) => `
+        <article class="saved-card">
+          <div class="saved-image">
+            ${note.photo ? `<img src="${note.photo}" alt="${escapeHtml(note.name)} photo">` : '<div class="photo-placeholder">🐾</div>'}
+          </div>
+          <div class="saved-content">
+            <div class="saved-top">
+              <div>
+                <h3>${escapeHtml(note.name)}</h3>
+                <p>${escapeHtml(note.species)} • ${escapeHtml(note.age)}</p>
+              </div>
+              <button class="delete-btn" type="button" data-index="${index}">Delete</button>
+            </div>
+            <div class="saved-meta"><strong>Vaccination:</strong> ${escapeHtml(note.vaccine)}</div>
+            <div class="saved-notes"><strong>Notes:</strong> ${escapeHtml(note.notes)}</div>
+          </div>
+        </article>
+      `).join('');
+
+      document.querySelectorAll('.delete-btn').forEach((button) => {
+        button.addEventListener('click', () => {
+          const index = Number(button.dataset.index);
+          const notes = loadNotes();
+          notes.splice(index, 1);
+          saveNotes(notes);
+          renderNotes();
+        });
+      });
+    }
+
+    petPhotoInput.addEventListener('change', () => {
+      const file = petPhotoInput.files && petPhotoInput.files[0];
+      if (!file) {
+        selectedPhoto = '';
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        selectedPhoto = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    noteForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+
+      const name = document.getElementById('petName').value.trim();
+      const species = document.getElementById('petSpecies').value;
+      const age = document.getElementById('petAge').value.trim();
+      const vaccine = document.getElementById('petVaccine').value;
+      const notesText = document.getElementById('petNotes').value.trim();
+
+      const notes = loadNotes();
+      notes.unshift({
+        name,
+        species,
+        age,
+        vaccine,
+        notes: notesText,
+        photo: selectedPhoto,
+      });
+      saveNotes(notes);
+      noteForm.reset();
+      selectedPhoto = '';
+      renderNotes();
+    });
+
+    clearFormButton.addEventListener('click', () => {
+      noteForm.reset();
+      selectedPhoto = '';
+      petPhotoInput.value = '';
+    });
+
+    renderNotes();
+  </script>
+</body>
+</html>

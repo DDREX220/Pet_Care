@@ -1,3 +1,4 @@
+"""Unit tests for Vaccination.validate() - Sprint 2."""
 import unittest
 from datetime import date, timedelta
 from app.models.vaccination_model import Vaccination

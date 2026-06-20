@@ -20,6 +20,7 @@ class PetController:
             species = request.form.get("type")  # Template uses 'type', model uses 'species'
             breed = request.form.get("breed")
             age = request.form.get("age")
+            age = int(age) if age and age.strip().isdigit() else None
             description = request.form.get("notes")  # Template uses 'notes'
 
             user_id = session.get("user_id")

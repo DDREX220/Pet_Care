@@ -1,64 +1,86 @@
-{% extends "base.html" %}
-
-{% block content %}
-<div class="dashboard-container">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 15px;">
-        <div>
-            <h1>Lost Pet Reports 🚩</h1>
-            <p class="dashboard-text">Admin Panel: View and monitor active lost pet reports submitted by users.</p>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lost Pet Reports</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+</head>
+<body class="admin-page">
+  {% include 'header.html' %}
+  <main class="dashboard-shell">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="container dashboard-flashes">
+          {% for category, message in messages %}
+            <div class="flash {{ category }}">{{ message }}</div>
+          {% endfor %}
         </div>
-        <a href="{{ url_for('admin.view_users') }}" class="post-btn" style="background: #fff; border: 1.5px solid var(--primary); color: var(--primary);">
-            <i class="fa-solid fa-users"></i> Registered Users
-        </a>
+      {% endif %}
+    {% endwith %}
+    <div class="container" style="padding-top:30px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 15px;">
+          <div>
+              <h1>Lost Pet Reports 🚩</h1>
+              <p class="dashboard-text">Admin Panel: View and monitor active lost pet reports submitted by users.</p>
+          </div>
+          <a href="{{ url_for('admin.view_users') }}" class="post-btn" style="background: #fff; border: 1.5px solid var(--primary); color: var(--primary);">
+              <i class="fa-solid fa-users"></i> Registered Users
+          </a>
+      </div>
+
+      {% if reports %}
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px;">
+              {% for report in reports %}
+                  <div class="card" style="display: flex; flex-direction: column; justify-content: space-between; transition: all 0.3s ease; border-top: 4px solid #b42318;">
+                      <div>
+                          <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 15px;">
+                              <h3 style="color: #b42318; font-size: 1.25rem; margin: 0;">{{ report.pet_name or "Unknown Pet" }}</h3>
+                              <span style="font-size: 0.8rem; background: #fff1f2; color: #b42318; border: 1px solid #fda29b; padding: 4px 10px; border-radius: 20px; font-weight: 700; text-transform: uppercase;">
+                                  Lost
+                              </span>
+                          </div>
+
+                          <div style="margin-bottom: 15px;">
+                              {% if report.photo %}
+                                  <img src="{{ url_for('static', filename='uploads/' + report.photo) }}" alt="{{ report.pet_name }}" style="width: 100%; height: 200px; object-fit: cover; border-radius: 12px; border: 1px solid #ddd; margin-bottom: 10px;">
+                              {% endif %}
+                              <p style="margin-bottom: 8px; font-size: 0.95rem; color: var(--text-color);">
+                                  <strong><i class="fa-solid fa-paw" style="color: var(--primary);"></i> Species:</strong> {{ report.species or "N/A" }}
+                              </p>
+                              <p style="margin-bottom: 8px; font-size: 0.95rem; color: var(--text-color);">
+                                  <strong><i class="fa-solid fa-location-dot" style="color: var(--primary);"></i> Location:</strong> {{ report.location }}
+                              </p>
+                              <p style="margin-bottom: 8px; font-size: 0.95rem; color: var(--text-color);">
+                                  <strong><i class="fa-regular fa-user" style="color: var(--primary);"></i> Owner:</strong> {{ report.owner_name or "N/A" }}
+                              </p>
+                              <p style="margin-bottom: 8px; font-size: 0.95rem; color: var(--text-color);">
+                                  <strong><i class="fa-regular fa-clock" style="color: var(--primary);"></i> Reported:</strong> {{ report.created_at }}
+                              </p>
+                          </div>
+
+                          <div style="background: var(--gray-light); padding: 12px; border-radius: 10px; border: 1px solid #eee; margin-top: 15px;">
+                              <p style="margin: 0; font-size: 0.9rem; color: var(--muted); line-height: 1.5; font-style: italic;">
+                                  "{{ report.description or 'No details provided.' }}"
+                              </p>
+                          </div>
+                      </div>
+                  </div>
+              {% endfor %}
+          </div>
+      {% else %}
+          <div class="panel" style="text-align: center; padding: 60px 40px;">
+              <div style="font-size: 60px; margin-bottom: 20px;">🎉</div>
+              <h3 style="margin-bottom: 10px; color: var(--text);">No active lost pet reports</h3>
+              <p style="color: var(--muted); max-width: 400px; margin: 0 auto;">
+                  Currently, there are no active lost pet reports filed in the system. All pets are safe!
+              </p>
+          </div>
+      {% endif %}
     </div>
-
-    {% if reports %}
-        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px;">
-            {% for report in reports %}
-                <div class="card" style="display: flex; flex-direction: column; justify-content: space-between; transition: all 0.3s ease; border-top: 4px solid #b42318;">
-                    <div>
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 15px;">
-                            <h3 style="color: #b42318; font-size: 1.25rem; margin: 0;">{{ report.pet_name or "Unknown Pet" }}</h3>
-                            <span style="font-size: 0.8rem; background: #fff1f2; color: #b42318; border: 1px solid #fda29b; padding: 4px 10px; border-radius: 20px; font-weight: 700; text-transform: uppercase;">
-                                Lost
-                            </span>
-                        </div>
-
-                        <div style="margin-bottom: 15px;">
-                            {% if report.photo %}
-                                <img src="{{ url_for('static', filename='uploads/' + report.photo) }}" alt="{{ report.pet_name }}" style="width: 100%; height: 200px; object-fit: cover; border-radius: 12px; border: 1px solid #ddd; margin-bottom: 10px;">
-                            {% endif %}
-                            <p style="margin-bottom: 8px; font-size: 0.95rem; color: var(--text-color);">
-                                <strong><i class="fa-solid fa-paw" style="color: var(--primary);"></i> Species:</strong> {{ report.species or "N/A" }}
-                            </p>
-                            <p style="margin-bottom: 8px; font-size: 0.95rem; color: var(--text-color);">
-                                <strong><i class="fa-solid fa-location-dot" style="color: var(--primary);"></i> Location:</strong> {{ report.location }}
-                            </p>
-                            <p style="margin-bottom: 8px; font-size: 0.95rem; color: var(--text-color);">
-                                <strong><i class="fa-regular fa-user" style="color: var(--primary);"></i> Owner:</strong> {{ report.owner_name or "N/A" }}
-                            </p>
-                            <p style="margin-bottom: 8px; font-size: 0.95rem; color: var(--text-color);">
-                                <strong><i class="fa-regular fa-clock" style="color: var(--primary);"></i> Reported:</strong> {{ report.created_at }}
-                            </p>
-                        </div>
-
-                        <div style="background: var(--gray-light); padding: 12px; border-radius: 10px; border: 1px solid #eee; margin-top: 15px;">
-                            <p style="margin: 0; font-size: 0.9rem; color: var(--muted); line-height: 1.5; font-style: italic;">
-                                "{{ report.description or 'No details provided.' }}"
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <div class="panel" style="text-align: center; padding: 60px 40px;">
-            <div style="font-size: 60px; margin-bottom: 20px;">🎉</div>
-            <h3 style="margin-bottom: 10px; color: var(--text);">No active lost pet reports</h3>
-            <p style="color: var(--muted); max-width: 400px; margin: 0 auto;">
-                Currently, there are no active lost pet reports filed in the system. All pets are safe!
-            </p>
-        </div>
-    {% endif %}
-</div>
-{% endblock %}
+  </main>
+</body>
+</html>

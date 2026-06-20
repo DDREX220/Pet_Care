@@ -30,14 +30,18 @@
     <nav class="main-nav" id="primary-navigation" aria-label="Primary">
       <a href="/">Home</a>
       <a href="/services">Services</a>
+      <a href="/pets">My Pets</a>
       <a href="/lost-found">Lost &amp; Found</a>
       <a href="/community">Community</a>
-      <a href="/pet-care-tips">Pet Care Tips</a>
+      <a href="/tips">Pet Care Tips</a>
       <a href="/dashboard">Dashboard</a>
       <a href="/my-note">My Note</a>
       {% if session.get('user_name') %}
-        <a href="/reminders">Reminders</a>
-      {% endif %}
+    <a href="/reminders">Reminders</a>
+{% endif %}
+{% if session.get('is_admin') %}
+    <a href="/admin/users">Admin Panel</a>
+{% endif %}
       <div class="mobile-nav-actions">
         {% if session.get('user_name') %}
           <a class="btn btn-outline" href="/dashboard">Profile</a>

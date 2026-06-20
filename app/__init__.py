@@ -48,10 +48,6 @@ def create_app():
     def services():
         return render_template("services.html")
 
-    @app.route("/pet-care-tips")
-    def pet_care_tips():
-        return render_template("pet_care_tips.html")
-
     @app.route("/my-note")
     def my_note():
         return render_template("my_note.html")

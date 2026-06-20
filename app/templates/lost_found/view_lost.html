@@ -227,7 +227,7 @@
     </div>
 
     <div class="pets-grid">
-        {% for pet in reports + found_reports %}
+       {% for pet in reports %}
         <article class="pet-card">
             <span class="status-badge status-{{ pet.type }}">{{ pet.type }}</span>
             <div class="card-header">

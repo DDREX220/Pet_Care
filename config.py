@@ -1,6 +1,6 @@
-MYSQL_HOST = "thomas.proxy.rlwy.net"
-MYSQL_PORT = 21502
+MYSQL_HOST = "localhost"
+MYSQL_PORT = 3306
 MYSQL_USER = "root"
-MYSQL_PASSWORD = "GEjMGRJiTSNgJpXjhOGVSWZgcJacBtEC"
-MYSQL_DATABASE = "railway"
+MYSQL_PASSWORD = "Root@123"
+MYSQL_DATABASE = "pet_care"
 SECRET_KEY = "petcare_secret_key_2024"

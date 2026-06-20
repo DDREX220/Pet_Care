@@ -33,11 +33,11 @@ class User:
         return user_data
 
     @staticmethod
-    def update_profile(user_id, name, email):
+    def update_profile(user_id, name, email, address=None):
         db = Database()
         db.execute(
-            "UPDATE users SET name = %s, email = %s WHERE id = %s",
-            (name, email, user_id)
+            "UPDATE users SET name = %s, email = %s, address = %s WHERE id = %s",
+            (name, email, address, user_id)
         )
         db.close()
 

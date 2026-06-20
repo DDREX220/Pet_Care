@@ -65,7 +65,7 @@
           <div class="life-card-meta">
             <div class="life-card-stat">
               <span class="life-card-stat-label">Member since</span>
-              <strong>{{ user['created_at'][:10] if user['created_at'] else '—' }}</strong>
+              <strong>{{ user['created_at'].strftime('%Y-%m-%d') if user['created_at'] else '—' }}</strong>
             </div>
             <div class="life-card-stat">
               <span class="life-card-stat-label">Community posts</span>
@@ -122,6 +122,7 @@
 
           <div class="profile-editor-actions">
             <button class="btn btn-solid" type="submit">Save Changes</button>
+            <button class="btn btn-ghost" type="button" id="openPasswordModal">Change Password</button>
             {% if not is_admin %}
               <button class="btn btn-ghost profile-delete-btn" type="button" id="openDeleteModal">Delete Account</button>
             {% endif %}
@@ -163,7 +164,7 @@
                       {{ member['role'] or 'user' }}
                     </span>
                   </td>
-                  <td>{{ member['created_at'][:10] if member['created_at'] else '—' }}</td>
+                  <td>{{ member['created_at'].strftime('%Y-%m-%d') if member['created_at'] else '—' }}</td>
                 </tr>
               {% endfor %}
             </tbody>
@@ -174,7 +175,34 @@
   </main>
 
   {% if not is_admin %}
-    <div class="modal-overlay hidden" id="deleteModal" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle">
+    <div class="modal-overlay hidden" id="passwordModal" role="dialog" aria-modal="true" aria-labelledby="passwordModalTitle">
+  <div class="modal-card">
+    <h3 id="passwordModalTitle">Change Password</h3>
+    <p>Update your password securely to keep your account safe.</p>
+   <form method="post" action="{{ url_for('auth.reset_password') }}" class="profile-editor-form" id="passwordForm">
+      <label>
+        <span>Current Password</span>
+        <input type="password" name="current_password" id="currentPasswordInput" class="{% if pwd_error %}input-error{% endif %}" required>
+        <small class="field-error {% if not pwd_error %}hidden{% endif %}" id="currentPasswordError">Current password is incorrect.</small>
+      </label>
+      <label>
+        <span>New Password</span>
+        <input type="password" name="new_password" id="newPasswordInput" required>
+      </label>
+      <label>
+        <span>Confirm Password</span>
+        <input type="password" name="confirm_password" id="confirmPasswordInput" required>
+        <small class="field-error hidden" id="confirmPasswordError">Passwords do not match.</small>
+      </label>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" type="button" id="closePasswordModal">Cancel</button>
+        <button class="btn btn-solid" type="submit">Reset Password</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="deleteModal" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle">
       <div class="modal-card">
         <h3 id="deleteModalTitle">Delete your account?</h3>
         <p>This permanently removes your profile, and you will be signed out immediately.</p>
@@ -206,6 +234,41 @@
       modal.addEventListener('click', (event) => {
         if (event.target === modal) setOpen(false);
       });
+
+      const openPwdBtn = document.getElementById('openPasswordModal');
+      const pwdModal = document.getElementById('passwordModal');
+      const closePwdBtn = document.getElementById('closePasswordModal');
+
+      if (openPwdBtn && pwdModal) {
+        const setPwdOpen = (open) => pwdModal.classList.toggle('hidden', !open);
+        openPwdBtn.addEventListener('click', () => setPwdOpen(true));
+        closePwdBtn.addEventListener('click', () => setPwdOpen(false));
+        pwdModal.addEventListener('click', (event) => {
+          if (event.target === pwdModal) setPwdOpen(false);
+        });
+
+        {% if pwd_error %}
+        setPwdOpen(true);
+        {% endif %}
+      }
+
+      const pwdForm = document.getElementById('passwordForm');
+      const newPwdInput = document.getElementById('newPasswordInput');
+      const confirmPwdInput = document.getElementById('confirmPasswordInput');
+      const confirmPwdError = document.getElementById('confirmPasswordError');
+
+      if (pwdForm) {
+        pwdForm.addEventListener('submit', (event) => {
+          if (newPwdInput.value !== confirmPwdInput.value) {
+            event.preventDefault();
+            confirmPwdInput.classList.add('input-error');
+            confirmPwdError.classList.remove('hidden');
+          } else {
+            confirmPwdInput.classList.remove('input-error');
+            confirmPwdError.classList.add('hidden');
+          }
+        });
+      }
     });
   </script>
 </body>

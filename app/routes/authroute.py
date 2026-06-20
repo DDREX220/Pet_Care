@@ -11,6 +11,6 @@ class AuthRoutes:
         self.bp.add_url_rule("/logout", view_func=self.controller.logout)
         self.bp.add_url_rule("/profile", view_func=self.controller.profile, methods=["GET", "POST"])
         self.bp.add_url_rule("/reset_password", view_func=self.controller.reset_password, methods=["GET", "POST"])
-        self.bp.add_url_rule("/dashboard", view_func=self.controller.dashboard)
+        self.bp.add_url_rule("/dashboard", view_func=self.controller.dashboard, methods=["GET", "POST"])
         return self.bp
     

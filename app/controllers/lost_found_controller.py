@@ -20,12 +20,24 @@ class LostFoundController:
             description = request.form.get("description")
 
             user_id = session.get("user_id")
-            
+
+            # Handle photo upload
+            photo_filename = None
+            photo_file = request.files.get("photo")
+            if photo_file and photo_file.filename:
+                from werkzeug.utils import secure_filename
+
+                filename = secure_filename(f"lf_{user_id}_{photo_file.filename}")
+                upload_folder = os.path.join("app", "static", "uploads")
+                os.makedirs(upload_folder, exist_ok=True)
+                photo_file.save(os.path.join(upload_folder, filename))
+                photo_filename = f"uploads/{filename}"
+
             full_description = f"{status.upper()} | Name: {name} | Type: {animal_type} | Contact: {contact_info} | {description}"
             if status == "lost":
-                LostFound.report_lost(user_id, None, location, full_description)
+                LostFound.report_lost(user_id, None, location, full_description, contact_info, photo_filename)
             else:
-                LostFound.report_found(user_id, location, full_description)
+                LostFound.report_found(user_id, location, full_description, contact_info, photo_filename)
             flash(f"{status.capitalize()} report submitted successfully!", "success")
             return redirect(url_for("lost_found.view_lost"))
 

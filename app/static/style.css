@@ -2994,3 +2994,28 @@ button,input{font:inherit}
 }
 
 
+
+
+html, body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden; /* Instantly cuts off the extra horizontal space */
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+*, *::before, *::after {
+  box-sizing: inherit; /* Prevents paddings from expanding elements wider than 100% */
+}
+
+/* Force all structural containers to stay within the screen boundary */
+body, header, nav, main, section, .container, [class*="wrapper"] {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+nav {
+  padding-right: 20px; /* Gives the admin panel some breathing room */
+}

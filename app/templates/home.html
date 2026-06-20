@@ -133,56 +133,52 @@
       const searchTerms = ['Golden Retriever', 'Lost Cat', 'Vet Visit', 'Pet Sitting', 'Grooming', 'Training'];
       const locations = ['Brooklyn, NY', 'Queens, NY', 'Central Park, NY', 'Manhattan, NY', 'Jersey City, NJ', 'Downtown, NYC'];
 
-      const entries = [
-        {
-          mode: 'adopt',
-          title: 'Golden Retriever Puppies',
-          description: 'Friendly family dogs ready for adoption and first-time owners.',
-          location: 'Brooklyn, NY',
-          route: '/community',
-          accent: 'Adoption',
-        },
-        {
-          mode: 'adopt',
-          title: 'Playful Tabby Cat',
-          description: 'Calm indoor cat with a curious personality and soft coat.',
-          location: 'Queens, NY',
-          route: '/community',
-          accent: 'Adoption',
-        },
-        {
-          mode: 'lost-found',
-          title: 'Charlie the Retriever',
-          description: 'Recently reported lost near the park with a red collar.',
-          location: 'Central Park, NY',
-          route: '/lost-found',
-          accent: 'Lost',
-        },
-        {
-          mode: 'lost-found',
-          title: 'Mittens the Tabby',
-          description: 'Found cat waiting for a verified owner match.',
-          location: 'Brooklyn, NY',
-          route: '/lost-found',
-          accent: 'Found',
-        },
-        {
-          mode: 'services',
-          title: 'Veterinary Care',
-          description: 'Book checkups, vaccines, and urgent support nearby.',
-          location: 'Manhattan, NY',
-          route: '/services',
-          accent: 'Service',
-        },
-        {
-          mode: 'services',
-          title: 'Grooming and Pet Sitting',
-          description: 'Trusted care for grooming, boarding, and in-home visits.',
-          location: 'Downtown, NYC',
-          route: '/services',
-          accent: 'Service',
-        },
-      ];
+      const realLostFound = {{ (lost_pets + found_pets) | tojson }};
+
+const lostFoundEntries = realLostFound.map((item) => ({
+  mode: 'lost-found',
+  title: item.pet_name || item.description || 'Pet report',
+  description: item.description || '',
+  location: item.location || 'Unknown location',
+  route: '/lost-found',
+  accent: item.type === 'lost' ? 'Lost' : 'Found',
+}));
+
+const entries = [
+  {
+    mode: 'adopt',
+    title: 'Golden Retriever Puppies',
+    description: 'Friendly family dogs ready for adoption and first-time owners.',
+    location: 'Brooklyn, NY',
+    route: '/community',
+    accent: 'Adoption',
+  },
+  {
+    mode: 'adopt',
+    title: 'Playful Tabby Cat',
+    description: 'Calm indoor cat with a curious personality and soft coat.',
+    location: 'Queens, NY',
+    route: '/community',
+    accent: 'Adoption',
+  },
+  ...lostFoundEntries,
+  {
+    mode: 'services',
+    title: 'Veterinary Care',
+    description: 'Book checkups, vaccines, and urgent support nearby.',
+    location: 'Manhattan, NY',
+    route: '/services',
+    accent: 'Service',
+  },
+  {
+    mode: 'services',
+    title: 'Grooming and Pet Sitting',
+    description: 'Trusted care for grooming, boarding, and in-home visits.',
+    location: 'Downtown, NYC',
+    route: '/services',
+    accent: 'Service',
+  },
+];
 
       let activeMode = 'adopt';
 

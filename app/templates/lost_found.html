@@ -184,7 +184,13 @@
               {% if report.reward %}
                 <div class="reward-box"><span>!</span> Reward: {{ report.reward }}</div>
               {% endif %}
+
+              {% if '@' in report.contact_info %}
               <a class="contact-btn" href="mailto:{{ report.contact_info }}?subject=PetCare%20{{ report.report_type|upper }}%20report%20for%20{{ report.pet_name|urlencode }}">Contact Reporter</a>
+              {% else %}
+              <a class="contact-btn" href="tel:{{ report.contact_info }}">Contact Reporter</a>
+              <span class="contact-text">📞 {{ report.contact_info }}</span>
+              {% endif %}
             </div>
           </article>
         {% else %}

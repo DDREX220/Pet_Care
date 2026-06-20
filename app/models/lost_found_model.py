@@ -3,26 +3,25 @@ from app.database import Database
 class LostFound:
 
     @staticmethod
-    def report_lost(user_id, pet_id, location, description):
-        """US18 - Report a lost pet."""
+    @staticmethod
+    def report_lost(user_id, pet_id, location, description, contact_info, photo=None):
         db = Database()
         db.execute(
-            """INSERT INTO lost_found 
-               (user_id, pet_id, type, location, description, status)
-               VALUES (%s, %s, 'lost', %s, %s, 'active')""",
-            (user_id, pet_id, location, description)
+        """INSERT INTO lost_found 
+           (user_id, pet_id, type, location, description, contact_info, photo, status)
+           VALUES (%s, %s, 'lost', %s, %s, %s, %s, 'active')""",
+        (user_id, pet_id, location, description, contact_info, photo)
         )
         db.close()
 
     @staticmethod
-    def report_found(user_id, location, description, photo=None):
-        """US20 - Report a found pet."""
+    def report_found(user_id, location, description, contact_info, photo=None):
         db = Database()
         db.execute(
-            """INSERT INTO lost_found 
-               (user_id, type, location, description, photo, status)
-               VALUES (%s, 'found', %s, %s, %s, 'active')""",
-            (user_id, location, description, photo)
+        """INSERT INTO lost_found 
+           (user_id, type, location, description, contact_info, photo, status)
+           VALUES (%s, 'found', %s, %s, %s, %s, 'active')""",
+        (user_id, location, description, contact_info, photo)
         )
         db.close()
 

@@ -53,7 +53,12 @@ def create_app():
         return render_template("my_note.html")
     @app.route("/")
     def home():
-        return render_template("home.html")
+        from app.models.lost_found_model import LostFound
+
+        lost_pets = LostFound.get_all_lost()
+        found_pets = LostFound.get_all_found()
+
+        return render_template("home.html", lost_pets=lost_pets, found_pets=found_pets)
 
     # Error handlers
     @app.errorhandler(404)

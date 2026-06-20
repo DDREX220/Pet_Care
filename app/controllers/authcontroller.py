@@ -72,6 +72,53 @@ class AuthController:
             
         return redirect(url_for("auth.dashboard"))
 
+    def forgot_password(self):
+        if request.method == "POST":
+            email = request.form.get("email")
+            user = User.get_by_email(email)
+
+            if user:
+                import secrets
+                from datetime import datetime, timedelta
+
+                token = secrets.token_urlsafe(32)
+                expiry = datetime.now() + timedelta(hours=1)
+
+                User.set_reset_token(email, token, expiry)
+
+                reset_link = url_for("auth.reset_password_token", token=token, _external=True)
+                flash(f"Reset link (testing only): {reset_link}", "info")
+            else:
+                flash("If that email exists, a reset link has been generated.", "info")
+
+            return redirect(url_for("auth.forgot_password"))
+
+        return render_template("forgot_password.html")
+
+    def reset_password_token(self, token):
+        from datetime import datetime
+
+        user = User.get_by_reset_token(token)
+
+        if not user or not user['reset_token_expiry'] or user['reset_token_expiry'] < datetime.now():
+            flash("Reset link is invalid or has expired.", "danger")
+            return redirect(url_for("auth.forgot_password"))
+
+        if request.method == "POST":
+            new_password = request.form.get("new_password")
+            confirm_password = request.form.get("confirm_password")
+
+            if new_password != confirm_password:
+                flash("Passwords do not match.", "danger")
+                return render_template("reset_password_token.html", token=token)
+
+            User.update_password(user['id'], new_password)
+            User.clear_reset_token(user['id'])
+            flash("Password reset successful! Please log in.", "success")
+            return redirect(url_for("auth.login"))
+
+        return render_template("reset_password_token.html", token=token)
+
     @login_required
     def dashboard(self):
         from app.models.pet_model import Pet
@@ -90,6 +137,20 @@ class AuthController:
             name = request.form.get("name")
             email = request.form.get("email")
             address = request.form.get("address")
+
+            # Handle photo upload
+            photo_file = request.files.get("photo")
+            if photo_file and photo_file.filename:
+                import os
+                from werkzeug.utils import secure_filename
+
+                filename = secure_filename(f"user_{user_id}_{photo_file.filename}")
+                upload_folder = os.path.join("app", "static", "uploads")
+                os.makedirs(upload_folder, exist_ok=True)
+                photo_file.save(os.path.join(upload_folder, filename))
+
+                User.update_photo(user_id, f"uploads/{filename}")
+
             try:
                 User.update_profile(user_id, name, email, address)
                 session['name'] = name

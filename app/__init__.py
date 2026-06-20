@@ -198,9 +198,85 @@ def create_app():
     def pet_care_tips():
         return render_template("pet_care_tips.html")
 
-    @app.route("/my-note")
+    @app.route("/my-note", methods=["GET", "POST"])
     def my_note():
-        return render_template("my_note.html")
+        from .database import create_pet_note, get_pet_notes_by_user
+        from werkzeug.utils import secure_filename
+
+        if not session.get("user_id"):
+            flash("Please sign in to view and save your pet notes.", "error")
+            return redirect(url_for("auth.login"))
+
+        if request.method == "POST":
+            pet_name = request.form.get("pet_name", "").strip()
+            species = request.form.get("species", "").strip()
+            age = request.form.get("age", "").strip()
+            vaccine_date = request.form.get("vaccine_date", "").strip()
+            notes = request.form.get("notes", "").strip()
+            photo_url = None
+
+            photo = request.files.get("photo")
+            if photo and photo.filename:
+                uploads_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), "static", "uploads")
+                os.makedirs(uploads_dir, exist_ok=True)
+                filename = secure_filename(photo.filename)
+                filename = f"petnote_{session.get('user_id')}_{uuid.uuid4().hex}_{filename}"
+                dest = os.path.join(uploads_dir, filename)
+                photo.save(dest)
+                photo_url = f"uploads/{filename}"
+
+            if not pet_name or not species or not age or not vaccine_date or not notes:
+                flash("Please complete all required pet note fields.", "error")
+                return redirect(url_for("my_note"))
+
+            create_pet_note(
+                session.get("user_id"),
+                pet_name,
+                species,
+                age,
+                vaccine_date,
+                notes,
+                photo_url,
+                current_app.config.get("AUTH_DB_PATH"),
+            )
+            flash("Pet note saved to your account.", "success")
+            return redirect(url_for("my_note"))
+
+        notes = get_pet_notes_by_user(session.get("user_id"), current_app.config.get("AUTH_DB_PATH"))
+        return render_template("my_note.html", notes=notes)
+
+    @app.route("/my-note/<int:note_id>/delete", methods=["POST"])
+    def delete_my_note(note_id: int):
+        from .database import delete_pet_note, get_pet_note
+
+        if not session.get("user_id"):
+            flash("Please sign in to manage your pet notes.", "error")
+            return redirect(url_for("auth.login"))
+
+        note = get_pet_note(note_id, current_app.config.get("AUTH_DB_PATH"))
+        if not note:
+            flash("Pet note not found.", "error")
+            return redirect(url_for("my_note"))
+
+        if int(session.get("user_id")) != int(note["user_id"]):
+            flash("You can only delete your own pet notes.", "error")
+            return redirect(url_for("my_note"))
+
+        try:
+            if note["photo_url"]:
+                photo_path = os.path.join(
+                    os.path.abspath(os.path.dirname(__file__)),
+                    "static",
+                    note["photo_url"].replace("/", os.sep),
+                )
+                if os.path.exists(photo_path):
+                    os.remove(photo_path)
+        except Exception:
+            pass
+
+        delete_pet_note(note_id, current_app.config.get("AUTH_DB_PATH"))
+        flash("Pet note deleted.", "success")
+        return redirect(url_for("my_note"))
 
     @app.route("/dashboard", methods=["GET", "POST"])
     def dashboard():

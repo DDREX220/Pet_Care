@@ -1,6 +1,7 @@
 import os
 import sqlite3
 from contextlib import contextmanager
+from datetime import datetime, timedelta
 from typing import Optional
 
 from werkzeug.security import generate_password_hash
@@ -62,6 +63,36 @@ def init_db(db_path: Optional[str] = None) -> None:
                 description TEXT NOT NULL,
                 contact_info TEXT NOT NULL,
                 reward TEXT,
+                photo_url TEXT,
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY(user_id) REFERENCES users(id)
+            )
+            """
+        )
+
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS password_reset_tokens (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                token TEXT NOT NULL UNIQUE,
+                expires_at TEXT NOT NULL,
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY(user_id) REFERENCES users(id)
+            )
+            """
+        )
+
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS pet_notes (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                pet_name TEXT NOT NULL,
+                species TEXT NOT NULL,
+                age TEXT NOT NULL,
+                vaccine_date TEXT NOT NULL,
+                notes TEXT NOT NULL,
                 photo_url TEXT,
                 created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY(user_id) REFERENCES users(id)
@@ -168,6 +199,50 @@ def delete_user(user_id: int, db_path: Optional[str] = None):
             "DELETE FROM users WHERE id = ?",
             (int(user_id),),
         )
+        return True
+
+
+def update_user_password(user_id: int, password_hash: str, db_path: Optional[str] = None):
+    with connect(db_path) as connection:
+        connection.execute(
+            "UPDATE users SET password_hash = ? WHERE id = ?",
+            (password_hash, int(user_id)),
+        )
+        return True
+
+
+def create_password_reset_token(user_id: int, token: str, db_path: Optional[str] = None, hours_valid: int = 1):
+    expires_at = (datetime.utcnow() + timedelta(hours=hours_valid)).isoformat()
+    with connect(db_path) as connection:
+        connection.execute(
+            "DELETE FROM password_reset_tokens WHERE user_id = ?",
+            (int(user_id),),
+        )
+        cursor = connection.execute(
+            "INSERT INTO password_reset_tokens (user_id, token, expires_at) VALUES (?, ?, ?)",
+            (int(user_id), token, expires_at),
+        )
+        return cursor.lastrowid
+
+
+def get_password_reset_token(token: str, db_path: Optional[str] = None):
+    with connect(db_path) as connection:
+        row = connection.execute(
+            "SELECT id, user_id, token, expires_at FROM password_reset_tokens WHERE token = ?",
+            (token,),
+        ).fetchone()
+        if not row:
+            return None
+        expires = datetime.fromisoformat(row["expires_at"])
+        if expires < datetime.utcnow():
+            connection.execute("DELETE FROM password_reset_tokens WHERE id = ?", (row["id"],))
+            return None
+        return row
+
+
+def delete_password_reset_token(token: str, db_path: Optional[str] = None):
+    with connect(db_path) as connection:
+        connection.execute("DELETE FROM password_reset_tokens WHERE token = ?", (token,))
         return True
 
 
@@ -301,5 +376,65 @@ def delete_community_post(post_id: int, db_path: Optional[str] = None):
         connection.execute(
             "DELETE FROM community_posts WHERE id = ?",
             (int(post_id),),
+        )
+        return True
+
+
+def create_pet_note(
+    user_id: int,
+    pet_name: str,
+    species: str,
+    age: str,
+    vaccine_date: str,
+    notes: str,
+    photo_url: str = None,
+    db_path: Optional[str] = None,
+):
+    with connect(db_path) as connection:
+        cursor = connection.execute(
+            """
+            INSERT INTO pet_notes (
+                user_id, pet_name, species, age, vaccine_date, notes, photo_url
+            ) VALUES (?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                int(user_id),
+                pet_name.strip(),
+                species.strip(),
+                age.strip(),
+                vaccine_date.strip(),
+                notes.strip(),
+                photo_url.strip() if photo_url else None,
+            ),
+        )
+        return cursor.lastrowid
+
+
+def get_pet_notes_by_user(user_id: int, db_path: Optional[str] = None):
+    with connect(db_path) as connection:
+        return connection.execute(
+            """
+            SELECT id, user_id, pet_name, species, age, vaccine_date, notes, photo_url, created_at
+            FROM pet_notes
+            WHERE user_id = ?
+            ORDER BY created_at DESC, id DESC
+            """,
+            (int(user_id),),
+        ).fetchall()
+
+
+def get_pet_note(note_id: int, db_path: Optional[str] = None):
+    with connect(db_path) as connection:
+        return connection.execute(
+            "SELECT * FROM pet_notes WHERE id = ?",
+            (int(note_id),),
+        ).fetchone()
+
+
+def delete_pet_note(note_id: int, db_path: Optional[str] = None):
+    with connect(db_path) as connection:
+        connection.execute(
+            "DELETE FROM pet_notes WHERE id = ?",
+            (int(note_id),),
         )
         return True

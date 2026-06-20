@@ -1,7 +1,17 @@
+import secrets
+
 from flask import current_app, flash, redirect, render_template, request, session, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from app.database import create_user, get_user_by_email
+from app.database import (
+    create_password_reset_token,
+    create_user,
+    delete_password_reset_token,
+    get_password_reset_token,
+    get_user_by_email,
+    update_user_password,
+)
+from app.email_utils import send_password_reset_email
 
 
 class AuthController:
@@ -55,3 +65,59 @@ class AuthController:
             return redirect(url_for("auth.login"))
 
         return render_template("register.html")
+
+    def forgot_password(self):
+        if request.method == "POST":
+            email = request.form.get("email", "").strip().lower()
+            if not email:
+                flash("Please enter your email address.", "error")
+                return render_template("forgot_password.html")
+
+            db_path = current_app.config.get("AUTH_DB_PATH")
+            user = get_user_by_email(email, db_path)
+            if user:
+                token = secrets.token_urlsafe(32)
+                create_password_reset_token(user["id"], token, db_path)
+                reset_url = url_for("auth.reset_password", token=token, _external=True)
+                emailed = send_password_reset_email(user["email"], reset_url)
+                if not emailed and current_app.debug:
+                    flash(
+                        f"Email is not configured. Use this reset link: {reset_url}",
+                        "success",
+                    )
+                    return redirect(url_for("auth.login"))
+
+            flash(
+                "If an account exists for that email, password reset instructions have been sent.",
+                "success",
+            )
+            return redirect(url_for("auth.login"))
+
+        return render_template("forgot_password.html")
+
+    def reset_password(self, token):
+        db_path = current_app.config.get("AUTH_DB_PATH")
+        record = get_password_reset_token(token, db_path)
+        if not record:
+            flash("This password reset link is invalid or has expired.", "error")
+            return redirect(url_for("auth.forgot_password"))
+
+        if request.method == "POST":
+            password = request.form.get("password", "")
+            confirm_password = request.form.get("confirm_password", "")
+
+            if not password:
+                flash("Please enter a new password.", "error")
+                return render_template("reset_password.html", token=token)
+
+            if password != confirm_password:
+                flash("Passwords do not match.", "error")
+                return render_template("reset_password.html", token=token)
+
+            password_hash = generate_password_hash(password)
+            update_user_password(record["user_id"], password_hash, db_path)
+            delete_password_reset_token(token, db_path)
+            flash("Your password has been reset. Please sign in.", "success")
+            return redirect(url_for("auth.login"))
+
+        return render_template("reset_password.html", token=token)

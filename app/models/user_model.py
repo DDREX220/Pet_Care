@@ -73,4 +73,36 @@ class User:
             "DELETE FROM users WHERE id = %s",
             (user_id,)
         )
+    @staticmethod
+    def set_reset_token(email, token, expiry):
+        db = Database()
+        db.execute(
+            "UPDATE users SET reset_token = %s, reset_token_expiry = %s WHERE email = %s",
+            (token, expiry, email)
+        )
         db.close()
+
+    @staticmethod
+    def get_by_reset_token(token):
+        db = Database()
+        user_data = db.fetch_one("SELECT * FROM users WHERE reset_token = %s", (token,))
+        db.close()
+        return user_data
+
+    @staticmethod
+    def clear_reset_token(user_id):
+        db = Database()
+        db.execute(
+            "UPDATE users SET reset_token = NULL, reset_token_expiry = NULL WHERE id = %s",
+            (user_id,)
+        )
+    @staticmethod
+    def update_photo(user_id, photo_path):
+        db = Database()
+        db.execute(
+        "UPDATE users SET photo = %s WHERE id = %s",
+        (photo_path, user_id)
+    )
+    
+        db.close()
+        

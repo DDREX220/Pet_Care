@@ -10,9 +10,9 @@ class LostFoundController:
     def report_lost_found(self):
         """Unified report method to match the frontend form."""
         if request.method == "POST":
-            status = request.form.get("status")
-            name = request.form.get("name")
-            animal_type = request.form.get("type")
+            status = request.form.get("report_type")
+            name = request.form.get("pet_name")
+            animal_type = request.form.get("pet_type")
             breed = request.form.get("breed")
             age = request.form.get("age")
             location = request.form.get("location")
@@ -21,8 +21,11 @@ class LostFoundController:
 
             user_id = session.get("user_id")
             
-            LostFound.report_found(user_id, location, f"{status.upper()} | Name: {name} | Type: {animal_type} | Contact: {contact_info} | {description}")
-            
+            full_description = f"{status.upper()} | Name: {name} | Type: {animal_type} | Contact: {contact_info} | {description}"
+            if status == "lost":
+                LostFound.report_lost(user_id, None, location, full_description)
+            else:
+                LostFound.report_found(user_id, location, full_description)
             flash(f"{status.capitalize()} report submitted successfully!", "success")
             return redirect(url_for("lost_found.view_lost"))
 

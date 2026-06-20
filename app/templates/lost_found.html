@@ -49,7 +49,7 @@
     <section id="report-forms" class="container report-section">
       {% if session.get('user_name') %}
         <div class="report-grid">
-          <form class="report-form report-form-lost" method="post" action="/lost-found" enctype="multipart/form-data">
+          <form class="report-form report-form-lost" method="post" action="/lost-found/report" enctype="multipart/form-data">
             <input type="hidden" name="report_type" value="lost">
             <div class="report-form-head">
               <span class="report-badge lost">LOST</span>
@@ -96,7 +96,7 @@
             <button class="search-button" type="submit">Post Lost Report</button>
           </form>
 
-          <form class="report-form report-form-found" method="post" action="/lost-found" enctype="multipart/form-data">
+          <form class="report-form report-form-found" method="post" action="/lost-found/report" enctype="multipart/form-data">
             <input type="hidden" name="report_type" value="found">
             <div class="report-form-head">
               <span class="report-badge found">FOUND</span>
@@ -185,11 +185,6 @@
                 <div class="reward-box"><span>!</span> Reward: {{ report.reward }}</div>
               {% endif %}
               <a class="contact-btn" href="mailto:{{ report.contact_info }}?subject=PetCare%20{{ report.report_type|upper }}%20report%20for%20{{ report.pet_name|urlencode }}">Contact Reporter</a>
-              {% if session.get('user_id') and (session.get('user_id') == report['user_id'] or session.get('is_admin')) %}
-                <form method="post" action="{{ url_for('delete_report', report_id=report['id']) }}" onsubmit="return confirm('Delete this report?');" style="display:inline;margin-left:10px;">
-                  <button class="btn btn-ghost delete-btn" type="submit">Delete</button>
-                </form>
-              {% endif %}
             </div>
           </article>
         {% else %}

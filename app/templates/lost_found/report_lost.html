@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .report-page {
+        max-width: 800px;
+        margin: 0 auto;
+        display: grid;
+        gap: 30px;
+    }
+
+    .report-card {
+        background: #fff;
+        padding: 40px;
+        border-radius: 30px;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.05);
+        border: 2px dashed var(--line);
+    }
+
+    .report-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .report-header h2 {
+        font-size: 2.2rem;
+        color: var(--primary-dark);
+        font-weight: 800;
+        margin-bottom: 10px;
+    }
+
+    .report-header p {
+        color: var(--muted);
+        font-size: 1.1rem;
+    }
+
+    .report-form {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+    }
+
+    .report-form .full {
+        grid-column: 1 / -1;
+    }
+
+    .form-group {
+        display: grid;
+        gap: 10px;
+    }
+
+    .form-group label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 700;
+        color: var(--primary-dark);
+        font-size: 1rem;
+    }
+
+    .form-group label i {
+        color: var(--primary);
+    }
+
+    .report-form input, .report-form select, .report-form textarea {
+        padding: 14px 18px;
+        border-radius: 16px;
+        border: 2px solid #f0f0f0;
+        background: #fafafa;
+        font-family: inherit;
+        font-size: 1rem;
+        transition: all 0.2s;
+    }
+
+    .report-form input:focus, .report-form select:focus, .report-form textarea:focus {
+        border-color: var(--primary);
+        background: #fff;
+        outline: none;
+        box-shadow: 0 0 0 4px rgba(231, 163, 56, 0.1);
+    }
+
+    .type-selector {
+        display: flex;
+        gap: 12px;
+        grid-column: 1 / -1;
+        background: #fff7e3;
+        padding: 20px;
+        border-radius: 20px;
+        margin-bottom: 10px;
+    }
+
+    .type-option {
+        flex: 1;
+        position: relative;
+    }
+
+    .type-option input {
+        position: absolute;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    .type-box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        padding: 16px;
+        background: #fff;
+        border-radius: 16px;
+        border: 2px solid transparent;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-align: center;
+    }
+
+    .type-box i {
+        font-size: 1.5rem;
+        color: var(--muted);
+    }
+
+    .type-option input:checked + .type-box {
+        border-color: var(--primary);
+        background: #fff;
+        box-shadow: 0 4px 12px rgba(231, 163, 56, 0.2);
+    }
+
+    .type-option input:checked + .type-box i {
+        color: var(--primary);
+    }
+
+    .type-option input:checked + .type-box span {
+        color: var(--primary-dark);
+        font-weight: 700;
+    }
+
+    .btn-submit {
+        background: var(--primary);
+        color: #111;
+        padding: 18px;
+        border-radius: 20px;
+        border: none;
+        font-size: 1.2rem;
+        font-weight: 800;
+        cursor: pointer;
+        box-shadow: 0 8px 0 var(--primary-dark);
+        transition: all 0.2s;
+        margin-top: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 0 var(--primary-dark);
+    }
+
+    .btn-submit:active {
+        transform: translateY(4px);
+        box-shadow: 0 4px 0 var(--primary-dark);
+    }
+
+    @media (max-width: 600px) {
+        .report-form {
+            grid-template-columns: 1fr;
+        }
+        .report-card {
+            padding: 24px;
+        }
+    }
+</style>
+
+<div class="report-page">
+    <div class="report-card">
+        <div class="report-header">
+            <h2>Report a Pet</h2>
+            <p>Help bring a pet back home by sharing as much detail as possible.</p>
+        </div>
+
+        <form action="{{ url_for('lost_found.report_lost_found') }}" method="POST" class="report-form">
+            <div class="type-selector">
+                <label class="type-option">
+                    <input type="radio" name="status" value="lost" required checked>
+                    <div class="type-box">
+                        <i class="fa-solid fa-search"></i>
+                        <span>I lost a pet</span>
+                    </div>
+                </label>
+                <label class="type-option">
+                    <input type="radio" name="status" value="found">
+                    <div class="type-box">
+                        <i class="fa-solid fa-hand-holding-heart"></i>
+                        <span>I found a pet</span>
+                    </div>
+                </label>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fa-solid fa-tag"></i> Pet Name</label>
+                <input type="text" name="name" placeholder="e.g. Max or Unknown">
+            </div>
+
+            <div class="form-group">
+                <label><i class="fa-solid fa-paw"></i> Animal Type</label>
+                <select name="type" required>
+                    <option value="Dog">Dog</option>
+                    <option value="Cat">Cat</option>
+                    <option value="Bird">Bird</option>
+                    <option value="Rabbit">Rabbit</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fa-solid fa-dna"></i> Breed</label>
+                <input type="text" name="breed" placeholder="e.g. Golden Retriever">
+            </div>
+
+            <div class="form-group">
+                <label><i class="fa-solid fa-calendar"></i> Approx. Age</label>
+                <input type="text" name="age" placeholder="e.g. 2 years">
+            </div>
+
+            <div class="form-group full">
+                <label><i class="fa-solid fa-location-dot"></i> Location</label>
+                <input type="text" name="location" placeholder="Where was the pet last seen or found?" required>
+            </div>
+
+            <div class="form-group full">
+                <label><i class="fa-solid fa-id-card"></i> Contact Information</label>
+                <input type="text" name="contact_info" placeholder="Your phone number or email" required>
+            </div>
+
+            <div class="form-group full">
+                <label><i class="fa-solid fa-comment-dots"></i> Description & Notes</label>
+                <textarea name="description" rows="4" placeholder="Distinguishing marks, collar color, behavior..."></textarea>
+            </div>
+
+            <button type="submit" class="btn-submit full">
+                <i class="fa-solid fa-paper-plane"></i> Submit Report
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+

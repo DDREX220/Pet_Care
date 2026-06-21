@@ -1,0 +1,80 @@
+<header class="topbar">
+  <div class="topbar-inner container">
+    <div class="topbar-row">
+      <a class="logo-wrap" href="/" aria-label="PetCare home">
+        <div class="logo-mark">PetC</div>
+        <div class="logo-text">PetCare</div>
+      </a>
+
+      <button class="nav-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false" aria-controls="primary-navigation">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <div class="topbar-actions">
+        <!-- <button class="search-pill" type="button">&#128269; Search</button> -->
+        {% if session.get('user_name') %}
+          <span class="user-chip">
+            Hi, {{ session.get('user_name') }}
+            {% if session.get('is_admin') %}<span class="role-chip">Admin</span>{% endif %}
+          </span>
+          <a class="btn btn-outline desktop-only" href="/dashboard">Profile</a>
+          <a class="btn btn-ghost desktop-only" href="/logout">Sign Out</a>
+        {% else %}
+          <a class="btn btn-outline desktop-only" href="/login">&#128100; Sign In</a>
+        {% endif %}
+      </div>
+    </div>
+
+    <nav class="main-nav" id="primary-navigation" aria-label="Primary">
+      <a href="/">Home</a>
+      <a href="/services">Services</a>
+      <a href="/pets">My Pets</a>
+      <a href="/lost-found">Lost &amp; Found</a>
+      <a href="/community">Community</a>
+      <a href="/tips">Pet Care Tips</a>
+      <a href="/my-note">My Note</a>
+      {% if session.get('user_name') %}
+    <a href="/reminders">Reminders</a>
+{% endif %}
+{% if session.get('is_admin') %}
+    <a href="/admin/users">Admin Panel</a>
+{% endif %}
+      <div class="mobile-nav-actions">
+        {% if session.get('user_name') %}
+          <a class="btn btn-outline" href="/dashboard">Profile</a>
+          <a class="btn btn-ghost" href="/logout">Sign Out</a>
+        {% else %}
+          <a class="btn btn-outline" href="/login">&#128100; Sign In</a>
+        {% endif %}
+      </div>
+    </nav>
+  </div>
+</header>
+
+<script>
+  (() => {
+    const header = document.querySelector('.topbar');
+    const toggle = header ? header.querySelector('.nav-toggle') : null;
+    const nav = header ? header.querySelector('#primary-navigation') : null;
+    if (!toggle || !nav) return;
+
+    const setExpanded = (expanded) => {
+      header.classList.toggle('nav-open', expanded);
+      toggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+    };
+
+    toggle.addEventListener('click', () => {
+      setExpanded(!header.classList.contains('nav-open'));
+    });
+
+    nav.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => setExpanded(false));
+    });
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 960) setExpanded(false);
+    });
+  })();
+</script>

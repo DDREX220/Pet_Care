@@ -1,28 +1,10 @@
+# Entry point for the PetCare Flask application
 from app import create_app
 
+# Initialize the Flask app using the application factory pattern
 app = create_app()
 
 if __name__ == "__main__":
-    app.run(debug=True)
-
-@app.route("/dashboard")
-def dashboard():
-    return render_template("dashboard.html")
-
-
-# Profile Page
-
-@app.route("/profile")
-def profile():
-    return render_template("profile.html")
-
-
-# Reset Password Page
-
-@app.route("/reset_password")
-def reset_password():
-    return render_template("reset_password.html")
-
-
-if __name__ == "__main__":
+    # Run the development server with debug mode enabled
+    # debug=True auto-reloads on code changes and shows detailed error pages
     app.run(debug=True)

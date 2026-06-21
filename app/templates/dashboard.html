@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PetCare Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="dashboard-page">
+  {% include 'header.html' %}
+
+  <main class="dashboard-shell">
+    <section class="container dashboard-hero">
+      <p class="eyebrow">{% if is_admin %}Admin Dashboard{% else %}Your Space{% endif %}</p>
+      <h1>Welcome back, {{ user['name'] }}</h1>
+      <p class="dashboard-lead">
+        {% if is_admin %}
+          Manage your profile and oversee registered PetCare members.
+        {% else %}
+          Your personal life card and profile — only you can see this information.
+        {% endif %}
+      </p>
+    </section>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="container dashboard-flashes">
+          {% for category, message in messages %}
+            <div class="flash {{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <section class="container dashboard-layout">
+      <article class="life-card" aria-label="Your profile life card">
+        <div class="life-card-banner">
+          <div class="life-card-pattern"></div>
+          <span class="life-card-badge {% if is_admin %}life-card-badge-admin{% else %}life-card-badge-user{% endif %}">
+            {% if is_admin %}Admin{% else %}Member{% endif %}
+          </span>
+        </div>
+
+        <div class="life-card-body">
+          <div class="life-card-avatar">
+            {% if user and user['photo'] %}
+              <img src="{{ url_for('static', filename=user['photo']) }}" alt="Profile photo of {{ user['name'] }}">
+            {% else %}
+              <div class="life-card-avatar-fallback" aria-hidden="true">{{ user['name'][:1]|upper }}</div>
+            {% endif %}
+          </div>
+
+          <div class="life-card-identity">
+            <h2>{{ user['name'] }}</h2>
+            <p class="life-card-email">{{ user['email'] }}</p>
+            {% if user['address'] %}
+              <p class="life-card-address">{{ user['address'] }}</p>
+            {% else %}
+              <p class="life-card-address muted">No address added yet</p>
+            {% endif %}
+          </div>
+
+          <div class="life-card-meta">
+            <div class="life-card-stat">
+              <span class="life-card-stat-label">Member since</span>
+              <strong>{{ user['created_at'].strftime('%Y-%m-%d') if user['created_at'] else '—' }}</strong>
+            </div>
+            <div class="life-card-stat">
+              <span class="life-card-stat-label">Community posts</span>
+              <strong>{{ activity.posts }}</strong>
+            </div>
+            <div class="life-card-stat">
+              <span class="life-card-stat-label">Lost &amp; Found</span>
+              <strong>{{ activity.reports }}</strong>
+            </div>
+          </div>
+
+          <div class="life-card-id">
+            <span>PetCare ID</span>
+            <code>#{{ '%04d'|format(user['id']) }}</code>
+          </div>
+        </div>
+      </article>
+
+      <aside class="profile-editor-card">
+        <div class="profile-editor-head">
+          <h3>Edit Profile</h3>
+          <p>Update your details and photo. Changes are saved to your account only.</p>
+        </div>
+
+        <form class="profile-editor-form" method="post" enctype="multipart/form-data">
+          <label class="profile-upload">
+            <span>Profile photo</span>
+            <div class="profile-upload-row">
+              <div class="profile-upload-preview">
+                {% if user and user['photo'] %}
+                  <img src="{{ url_for('static', filename=user['photo']) }}" alt="">
+                {% else %}
+                  <div class="life-card-avatar-fallback small">{{ user['name'][:1]|upper }}</div>
+                {% endif %}
+              </div>
+              <input type="file" name="photo" accept="image/*">
+            </div>
+          </label>
+
+          <label>
+            <span>Full name</span>
+            <input type="text" name="name" value="{{ user['name'] }}" required>
+          </label>
+
+          <label>
+            <span>Email</span>
+            <input type="email" name="email" value="{{ user['email'] }}" {% if is_admin %}readonly{% endif %} required>
+          </label>
+
+          <label>
+            <span>Address</span>
+            <input type="text" name="address" value="{{ user['address'] if user['address'] else '' }}" placeholder="City, street, or area">
+          </label>
+
+          <div class="profile-editor-actions">
+            <button class="btn btn-solid" type="submit">Save Changes</button>
+            <button class="btn btn-ghost" type="button" id="openPasswordModal">Change Password</button>
+            {% if not is_admin %}
+              <button class="btn btn-ghost profile-delete-btn" type="button" id="openDeleteModal">Delete Account</button>
+            {% endif %}
+          </div>
+        </form>
+      </aside>
+    </section>
+
+    {% if is_admin and all_users %}
+      <section class="container admin-panel">
+        <div class="admin-panel-head">
+          <div>
+            <p class="eyebrow">Administration</p>
+            <h2>Registered Users</h2>
+            <p>Overview of all PetCare accounts. User profiles remain private to each member.</p>
+          </div>
+          <div class="admin-panel-count">{{ all_users|length }} users</div>
+        </div>
+
+        <div class="admin-users-table-wrap">
+          <table class="admin-users-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Joined</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for member in all_users %}
+                <tr class="{% if member['id'] == user['id'] %}is-current-user{% endif %}">
+                  <td>#{{ '%04d'|format(member['id']) }}</td>
+                  <td>{{ member['name'] }}</td>
+                  <td>{{ member['email'] }}</td>
+                  <td>
+                    <span class="role-pill {% if member['role'] == 'admin' %}role-pill-admin{% else %}role-pill-user{% endif %}">
+                      {{ member['role'] or 'user' }}
+                    </span>
+                  </td>
+                  <td>{{ member['created_at'].strftime('%Y-%m-%d') if member['created_at'] else '—' }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    {% endif %}
+  </main>
+
+  {% if not is_admin %}
+    <div class="modal-overlay hidden" id="passwordModal" role="dialog" aria-modal="true" aria-labelledby="passwordModalTitle">
+  <div class="modal-card">
+    <h3 id="passwordModalTitle">Change Password</h3>
+    <p>Update your password securely to keep your account safe.</p>
+   <form method="post" action="{{ url_for('auth.reset_password') }}" class="profile-editor-form" id="passwordForm">
+      <label>
+        <span>Current Password</span>
+        <input type="password" name="current_password" id="currentPasswordInput" class="{% if pwd_error %}input-error{% endif %}" required>
+        <small class="field-error {% if not pwd_error %}hidden{% endif %}" id="currentPasswordError">Current password is incorrect.</small>
+      </label>
+      <label>
+        <span>New Password</span>
+        <input type="password" name="new_password" id="newPasswordInput" required>
+      </label>
+      <label>
+        <span>Confirm Password</span>
+        <input type="password" name="confirm_password" id="confirmPasswordInput" required>
+        <small class="field-error hidden" id="confirmPasswordError">Passwords do not match.</small>
+      </label>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" type="button" id="closePasswordModal">Cancel</button>
+        <button class="btn btn-solid" type="submit">Reset Password</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="deleteModal" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle">
+      <div class="modal-card">
+        <h3 id="deleteModalTitle">Delete your account?</h3>
+        <p>This permanently removes your profile, and you will be signed out immediately.</p>
+        <div class="modal-actions">
+          <button class="btn btn-ghost" type="button" id="closeDeleteModal">Cancel</button>
+          <form method="post">
+            <input type="hidden" name="action" value="delete">
+            <button class="btn btn-danger" type="submit">Delete Account</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const openBtn = document.getElementById('openDeleteModal');
+      const modal = document.getElementById('deleteModal');
+      const closeBtn = document.getElementById('closeDeleteModal');
+
+      if (!openBtn || !modal) return;
+
+      const setOpen = (open) => {
+        modal.classList.toggle('hidden', !open);
+      };
+
+      openBtn.addEventListener('click', () => setOpen(true));
+      closeBtn.addEventListener('click', () => setOpen(false));
+      modal.addEventListener('click', (event) => {
+        if (event.target === modal) setOpen(false);
+      });
+
+      const openPwdBtn = document.getElementById('openPasswordModal');
+      const pwdModal = document.getElementById('passwordModal');
+      const closePwdBtn = document.getElementById('closePasswordModal');
+
+      if (openPwdBtn && pwdModal) {
+        const setPwdOpen = (open) => pwdModal.classList.toggle('hidden', !open);
+        openPwdBtn.addEventListener('click', () => setPwdOpen(true));
+        closePwdBtn.addEventListener('click', () => setPwdOpen(false));
+        pwdModal.addEventListener('click', (event) => {
+          if (event.target === pwdModal) setPwdOpen(false);
+        });
+
+        {% if pwd_error %}
+        setPwdOpen(true);
+        {% endif %}
+      }
+
+      const pwdForm = document.getElementById('passwordForm');
+      const newPwdInput = document.getElementById('newPasswordInput');
+      const confirmPwdInput = document.getElementById('confirmPasswordInput');
+      const confirmPwdError = document.getElementById('confirmPasswordError');
+
+      if (pwdForm) {
+        pwdForm.addEventListener('submit', (event) => {
+          if (newPwdInput.value !== confirmPwdInput.value) {
+            event.preventDefault();
+            confirmPwdInput.classList.add('input-error');
+            confirmPwdError.classList.remove('hidden');
+          } else {
+            confirmPwdInput.classList.remove('input-error');
+            confirmPwdError.classList.add('hidden');
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PetCare Tips</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+</head>
+<body class="tips-page">
+  {% include 'header.html' %}
+
+  <main class="dashboard-shell">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="container dashboard-flashes">
+          {% for category, message in messages %}
+            <div class="flash {{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <div class="container" style="padding-top:30px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 15px;">
+          <div>
+              <h1>Pet Care Tips 💡</h1>
+              <p class="dashboard-text">Expert tips and advice to help you take the best care of your furry friends.</p>
+          </div>
+          <form action="{{ url_for('tips.search_tips') }}" method="GET" style="display: flex; gap: 10px; max-width: 400px; width: 100%; margin: 0;">
+              <input type="text" name="keyword" placeholder="Search tips (e.g., diet, medicine)..." style="margin-bottom: 0; flex-grow: 1; height: 44px;" required>
+              <button type="submit" class="post-btn" style="height: 44px; padding: 0 20px; cursor: pointer;">
+                  <i class="fa-solid fa-magnifying-glass"></i> Search
+              </button>
+          </form>
+      </div>
+      {% if tips %}
+          <div class="tips-grid" style="padding:0; align-items:stretch;">
+              {% for tip in tips %}
+                  {% set cat = (tip.category or "")|lower %}
+                  {% if cat == "dog" %}{% set icon = "🐶" %}
+                  {% elif cat == "cat" %}{% set icon = "🐱" %}
+                  {% elif cat == "hamster" %}{% set icon = "🐹" %}
+                  {% elif cat == "parrot" %}{% set icon = "🦜" %}
+                  {% elif cat == "fish" %}{% set icon = "🐠" %}
+                  {% elif cat == "rabbit" %}{% set icon = "🐰" %}
+                  {% else %}{% set icon = "🐾" %}
+                  {% endif %}
+                  <article class="tip-card" style="display:flex; flex-direction:column; height:100%;">
+                      <div class="tip-icon">{{ icon }}</div>
+                      <h2>{{ tip.title }}</h2>
+                      <span style="display: inline-block; font-size: 0.8rem; background: #fff7e3; padding: 4px 10px; border-radius: 20px; font-weight: 600; color: var(--primary-dark); border: 1px solid var(--line); margin: 10px 0;">
+                          {{ tip.category or "General" }}
+                      </span>
+                      <p>Click to read the full details and learn how this tip helps your pet.</p>
+                      <a href="{{ url_for('tips.view_tip_detail', tip_id=tip.id) }}" class="tip-button" style="text-decoration:none; display:flex; align-items:center; justify-content:center; text-align:center; margin-top:auto;">Full Guide</a>
+                  </article>
+              {% endfor %}
+          </div>
+      {% else %}
+          <div class="panel" style="text-align: center; padding: 60px 40px;">
+              <div style="font-size: 60px; margin-bottom: 20px;">📘</div>
+              <h3 style="margin-bottom: 10px; color: var(--text);">No tips available</h3>
+              <p style="color: var(--muted); max-width: 400px; margin: 0 auto;">
+                  There are no pet care tips recorded in the database yet.
+              </p>
+          </div>
+      {% endif %}
+    </div>
+  </main>
+</body>
+</html>

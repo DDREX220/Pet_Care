@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PetCare Lost &amp; Found</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="lost-found-page">
+  {% include 'header.html' %}
+
+  <main class="lost-found-main">
+    <section class="lost-found-hero container">
+      <div>
+        <p class="eyebrow lost-found-eyebrow">Reunite pets faster</p>
+        <h1>Lost &amp; Found Pets</h1>
+        <p>Logged-in users can report a missing pet or post a pet they found. Recent reports are shown below.</p>
+      </div>
+      <a class="report-button" href="#report-forms">Report a Pet</a>
+    </section>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <section class="container flash-stack lost-found-flash-stack">
+          {% for category, message in messages %}
+            <div class="flash {{ category }}">{{ message }}</div>
+          {% endfor %}
+        </section>
+      {% endif %}
+    {% endwith %}
+
+    <section class="container lost-found-intro-grid">
+      <article class="info-panel">
+        <h2>Report a lost pet</h2>
+        <p>Share the pet's details, last known location, and how to contact you.</p>
+      </article>
+      <article class="info-panel">
+        <h2>Report a found pet</h2>
+        <p>Post what you found so the owner can reconnect quickly.</p>
+      </article>
+      <article class="info-panel">
+        <h2>Need access?</h2>
+        <p>{% if session.get('user_name') %}You are signed in and can post reports right now.{% else %}Sign in first to submit a report and include your contact details automatically.{% endif %}</p>
+      </article>
+    </section>
+
+    <section id="report-forms" class="container report-section">
+      {% if session.get('user_name') %}
+        <div class="report-grid">
+          <form class="report-form report-form-lost" method="post" action="/lost-found/report" enctype="multipart/form-data">
+            <input type="hidden" name="report_type" value="lost">
+            <div class="report-form-head">
+              <span class="report-badge lost">LOST</span>
+              <h2>Report a Lost Pet</h2>
+            </div>
+            <div class="report-fields">
+              <label>
+                <span>Pet name</span>
+                <input type="text" name="pet_name" placeholder="Buddy" required>
+              </label>
+              <label>
+                <span>Pet type</span>
+                <input type="text" name="pet_type" placeholder="Dog" required>
+              </label>
+              <label>
+                <span>Breed</span>
+                <input type="text" name="breed" placeholder="Golden Retriever">
+              </label>
+              <label>
+                <span>Last seen location</span>
+                <input type="text" name="location" placeholder="Central Park, NY" required>
+              </label>
+              <label>
+                <span>Last seen date</span>
+                <input type="date" name="event_date">
+              </label>
+              <label>
+                <span>Reward</span>
+                <input type="text" name="reward" placeholder="$500">
+              </label>
+              <label class="full-width">
+                <span>Photo</span>
+                <input type="file" name="photo" accept="image/*">
+              </label>
+              <label class="full-width">
+                <span>Description</span>
+                <textarea name="description" rows="4" placeholder="Color, collar, behavior, and any special marks" required></textarea>
+              </label>
+              <label class="full-width">
+                <span>Contact info</span>
+                <input type="text" name="contact_info" value="{{ session.get('user_email', '') }}" required>
+              </label>
+            </div>
+            <button class="search-button" type="submit">Post Lost Report</button>
+          </form>
+
+          <form class="report-form report-form-found" method="post" action="/lost-found/report" enctype="multipart/form-data">
+            <input type="hidden" name="report_type" value="found">
+            <div class="report-form-head">
+              <span class="report-badge found">FOUND</span>
+              <h2>Report a Found Pet</h2>
+            </div>
+            <div class="report-fields">
+              <label>
+                <span>Pet name</span>
+                <input type="text" name="pet_name" placeholder="Unknown / Found Pet" required>
+              </label>
+              <label>
+                <span>Pet type</span>
+                <input type="text" name="pet_type" placeholder="Cat" required>
+              </label>
+              <label>
+                <span>Breed</span>
+                <input type="text" name="breed" placeholder="Tabby">
+              </label>
+              <label>
+                <span>Found location</span>
+                <input type="text" name="location" placeholder="Brooklyn, NY" required>
+              </label>
+              <label>
+                <span>Found date</span>
+                <input type="date" name="event_date">
+              </label>
+              <label>
+                <span>Photo</span>
+                <input type="file" name="photo" accept="image/*">
+              </label>
+              <label class="full-width">
+                <span>Description</span>
+                <textarea name="description" rows="4" placeholder="Where it was found, behavior, collar, and any tags" required></textarea>
+              </label>
+              <label class="full-width">
+                <span>Contact info</span>
+                <input type="text" name="contact_info" value="{{ session.get('user_email', '') }}" required>
+              </label>
+            </div>
+            <button class="search-button" type="submit">Post Found Report</button>
+          </form>
+        </div>
+      {% else %}
+        <section class="login-needed-panel">
+          <h2>Sign in to report a pet</h2>
+          <p>You need to be logged in to submit a lost or found report.</p>
+          <a class="btn btn-solid" href="/login">Sign in to continue</a>
+        </section>
+      {% endif %}
+    </section>
+
+    <section class="container lost-found-feed">
+      <div class="feed-header">
+        <div>
+          <span class="results-kicker">Recent reports</span>
+          <h2>Latest Lost &amp; Found posts</h2>
+        </div>
+        <p>These are the most recent reports submitted by users.</p>
+      </div>
+
+      <div class="lost-found-grid report-feed-grid">
+        {% for report in reports or [] %}
+          <article class="pet-card report-card">
+            <div class="pet-image-wrap">
+              {% if report.photo_url %}
+                {% set photo_src = report.photo_url %}
+                {% if not photo_src.startswith('http://') and not photo_src.startswith('https://') %}
+                  {% set photo_src = url_for('static', filename=photo_src) %}
+                {% endif %}
+                <img src="{{ photo_src }}" alt="{{ report.pet_name }}">
+              {% else %}
+                <div class="photo-placeholder report-placeholder">{{ report.pet_name[:1] }}</div>
+              {% endif %}
+              <span class="status-tag {{ report.report_type }}">{{ report.report_type|upper }}</span>
+            </div>
+            <div class="pet-card-body">
+              <h2>{{ report.pet_name }}</h2>
+              <p class="breed">{{ report.pet_type }}{% if report.breed %} · {{ report.breed }}{% endif %}</p>
+              <div class="pet-meta">📍 {{ report.location }}</div>
+              {% if report.event_date %}
+                <div class="pet-meta">📅 {{ report.event_date }}</div>
+              {% endif %}
+              <div class="pet-meta">👤 {{ report.reporter_name }}</div>
+              <p class="report-description">{{ report.description }}</p>
+              {% if report.reward %}
+                <div class="reward-box"><span>!</span> Reward: {{ report.reward }}</div>
+              {% endif %}
+
+              {% if '@' in report.contact_info %}
+              <a class="contact-btn" href="mailto:{{ report.contact_info }}?subject=PetCare%20{{ report.report_type|upper }}%20report%20for%20{{ report.pet_name|urlencode }}">Contact Reporter</a>
+              {% else %}
+              <a class="contact-btn" href="tel:{{ report.contact_info }}">Contact Reporter</a>
+              <span class="contact-text">📞 {{ report.contact_info }}</span>
+              {% endif %}
+            </div>
+          </article>
+        {% else %}
+          <div class="empty-state">No reports yet. Be the first to post a lost or found pet.</div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <div class="container lost-found-footer-link">
+      <a href="/services">Need help finding nearby services? →</a>
+    </div>
+  </main>
+</body>
+</html>

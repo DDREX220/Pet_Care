@@ -12,9 +12,11 @@ class AuthController:
             if user and User.check_password(user['password'], password):
                 session['user_id'] = user['id']
                 session['name'] = user['name']
+                session['user_name'] = user['name']
                 session['role'] = user['role']
+                session['is_admin'] = (user['role'] == 'admin')
                 flash(f"Welcome back, {user['name']}!", "success")
-                return redirect(url_for("pets.view_pets"))
+                return redirect(url_for("auth.dashboard"))
             else:
                 flash("Invalid email or password.", "danger")
         
@@ -25,11 +27,6 @@ class AuthController:
             name = request.form.get("name")
             email = request.form.get("email")
             password = request.form.get("password")
-            confirm_password = request.form.get("confirm_password")
-            
-            if password != confirm_password:
-                flash("Passwords do not match.", "danger")
-                return render_template("register.html")
             
             if User.get_by_email(email):
                 flash("Email already registered.", "danger")
@@ -49,44 +46,140 @@ class AuthController:
 
     @login_required
     def profile(self):
-        user_id = session.get("user_id")
-        user = User.get_by_id(user_id)
-        
-        if request.method == "POST":
-            name = request.form.get("name")
-            email = request.form.get("email")
-            
-            User.update_profile(user_id, name, email)
-            session['name'] = name
-            flash("Profile updated successfully!", "success")
-            return redirect(url_for("auth.profile"))
-            
-        return render_template("profile.html", user=user)
+        return redirect(url_for("auth.dashboard"))
 
     @login_required
     def reset_password(self):
         if request.method == "POST":
-            old_password = request.form.get("old_password")
+            current_password = request.form.get("current_password")
             new_password = request.form.get("new_password")
             confirm_password = request.form.get("confirm_password")
             
             user_id = session.get("user_id")
             user = User.get_by_id(user_id)
             
-            if not User.check_password(user['password'], old_password):
-                flash("Incorrect old password.", "danger")
-                return render_template("reset_password.html")
+            if not User.check_password(user['password'], current_password):
+                flash("Current password is incorrect.", "danger")
+                return redirect(url_for("auth.dashboard", pwd_error=1))
                 
             if new_password != confirm_password:
                 flash("New passwords do not match.", "danger")
-                return render_template("reset_password.html")
+                return redirect(url_for("auth.dashboard"))
             
             User.update_password(user_id, new_password)
             flash("Password updated successfully!", "success")
-            return redirect(url_for("auth.profile"))
+            return redirect(url_for("auth.dashboard"))
             
-        return render_template("reset_password.html")
+        return redirect(url_for("auth.dashboard"))
+
+    def forgot_password(self):
+        if request.method == "POST":
+            email = request.form.get("email")
+            user = User.get_by_email(email)
+
+            if user:
+                import secrets
+                from datetime import datetime, timedelta
+
+                token = secrets.token_urlsafe(32)
+                expiry = datetime.now() + timedelta(hours=1)
+
+                User.set_reset_token(email, token, expiry)
+
+                reset_link = url_for("auth.reset_password_token", token=token, _external=True)
+                flash(f"Reset link (testing only): {reset_link}", "info")
+            else:
+                flash("If that email exists, a reset link has been generated.", "info")
+
+            return redirect(url_for("auth.forgot_password"))
+
+        return render_template("forgot_password.html")
+
+    def reset_password_token(self, token):
+        from datetime import datetime
+
+        user = User.get_by_reset_token(token)
+
+        if not user or not user['reset_token_expiry'] or user['reset_token_expiry'] < datetime.now():
+            flash("Reset link is invalid or has expired.", "danger")
+            return redirect(url_for("auth.forgot_password"))
+
+        if request.method == "POST":
+            new_password = request.form.get("new_password")
+            confirm_password = request.form.get("confirm_password")
+
+            if new_password != confirm_password:
+                flash("Passwords do not match.", "danger")
+                return render_template("reset_password_token.html", token=token)
+
+            User.update_password(user['id'], new_password)
+            User.clear_reset_token(user['id'])
+            flash("Password reset successful! Please log in.", "success")
+            return redirect(url_for("auth.login"))
+
+        return render_template("reset_password_token.html", token=token)
 
     @login_required
     def dashboard(self):
-        return render_template("dashboard.html")
+        from app.models.pet_model import Pet
+        from app.models.reminder import Reminder
+
+        user_id = session.get("user_id")
+        is_admin = session.get("is_admin", False)
+
+        if request.method == "POST":
+            if request.form.get("action") == "delete":
+                User.delete(user_id)
+                session.clear()
+                flash("Your account has been deleted.", "info")
+                return redirect(url_for("auth.login"))
+
+            name = request.form.get("name")
+            email = request.form.get("email")
+            address = request.form.get("address")
+
+            # Handle photo upload
+            photo_file = request.files.get("photo")
+            if photo_file and photo_file.filename:
+                import os
+                from werkzeug.utils import secure_filename
+
+                filename = secure_filename(f"user_{user_id}_{photo_file.filename}")
+                upload_folder = os.path.join("app", "static", "uploads")
+                os.makedirs(upload_folder, exist_ok=True)
+                photo_file.save(os.path.join(upload_folder, filename))
+
+                User.update_photo(user_id, f"uploads/{filename}")
+
+            try:
+                User.update_profile(user_id, name, email, address)
+                session['name'] = name
+                session['user_name'] = name
+                flash("Profile updated successfully!", "success")
+            except Exception:
+                flash("Error updating profile. Email might already be in use.", "danger")
+            return redirect(url_for("auth.dashboard"))
+
+        pwd_error = request.args.get("pwd_error")
+
+        user = User.get_by_id(user_id)
+        pets = Pet.get_all_by_user(user_id)
+        reminders = Reminder.get_all_by_user(user_id)
+
+        activity = {
+            "posts": 0,
+            "reports": 0,
+        }
+
+        all_users = User.get_all() if is_admin else None
+
+        return render_template(
+            "dashboard.html",
+            user=user,
+            is_admin=is_admin,
+            activity=activity,
+            all_users=all_users,
+            total_pets=len(pets),
+            total_reminders=len(reminders),
+            pwd_error=pwd_error
+        )

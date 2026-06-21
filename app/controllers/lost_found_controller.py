@@ -7,71 +7,69 @@ import os
 class LostFoundController:
 
     @login_required
-    def report_lost(self):
-        user_id = session.get("user_id")
-        pets = Pet.get_all_by_user(user_id)
-
+    def report_lost_found(self):
+        """Unified report method to match the frontend form."""
         if request.method == "POST":
-            pet_id = request.form.get("pet_id")
+            status = request.form.get("report_type")
+            name = request.form.get("pet_name")
+            animal_type = request.form.get("pet_type")
+            breed = request.form.get("breed")
+            age = request.form.get("age")
             location = request.form.get("location")
+            contact_info = request.form.get("contact_info")
             description = request.form.get("description")
-
-            if not pet_id or not location:
-                flash("Pet and location are required.", "danger")
-                return render_template("lost_found/report_lost.html", 
-                                       pets=pets)
-
-            LostFound.report_lost(user_id, pet_id, location, description)
-            flash("Lost pet reported successfully!", "success")
-            return redirect(url_for("lost_found.view_lost"))
-
-        return render_template("lost_found/report_lost.html", pets=pets)
-
-    @login_required
-    def report_found(self):
-        if request.method == "POST":
-            location = request.form.get("location")
-            description = request.form.get("description")
-            photo = None
-
-            if not location or not description:
-                flash("Location and description are required.", "danger")
-                return render_template("lost_found/report_found.html")
-
-            # Handle photo upload
-            if "photo" in request.files:
-                file = request.files["photo"]
-                if file.filename != "":
-                    upload_folder = "app/static/uploads"
-                    os.makedirs(upload_folder, exist_ok=True)
-                    photo_path = os.path.join(upload_folder, file.filename)
-                    file.save(photo_path)
-                    photo = file.filename
 
             user_id = session.get("user_id")
-            LostFound.report_found(user_id, location, description, photo)
-            flash("Found pet reported successfully!", "success")
-            return redirect(url_for("lost_found.view_found"))
 
-        return render_template("lost_found/report_found.html")
+            # Handle photo upload
+            photo_filename = None
+            photo_file = request.files.get("photo")
+            if photo_file and photo_file.filename:
+                from werkzeug.utils import secure_filename
+
+                filename = secure_filename(f"lf_{user_id}_{photo_file.filename}")
+                upload_folder = os.path.join("app", "static", "uploads")
+                os.makedirs(upload_folder, exist_ok=True)
+                photo_file.save(os.path.join(upload_folder, filename))
+                photo_filename = f"uploads/{filename}"
+
+            full_description = f"{status.upper()} | Name: {name} | Type: {animal_type} | Contact: {contact_info} | {description}"
+            if status == "lost":
+                LostFound.report_lost(user_id, None, location, full_description, contact_info, photo_filename)
+            else:
+                LostFound.report_found(user_id, location, full_description, contact_info, photo_filename)
+            flash(f"{status.capitalize()} report submitted successfully!", "success")
+            return redirect(url_for("lost_found.view_lost"))
+
+        return render_template("lost_found/report_lost.html")
 
     def view_lost(self):
-        location = request.args.get("location", "")
-        if location:
-            reports = LostFound.filter_by_location(location)
-        else:
-            reports = LostFound.get_all_lost()
-        return render_template("lost_found/view_lost.html",
-                               reports=reports, location=location)
+        raw_reports = list(LostFound.get_all_lost() or [])
+        raw_found = list(LostFound.get_all_found() or [])
 
-    def view_found(self):
-        reports = LostFound.get_all_found()
-        return render_template("lost_found/view_found.html", 
-                               reports=reports)
+        reports = []
+        for r in raw_reports + raw_found:
+            reports.append({
+                'id': r.get('id'),
+                'user_id': r.get('user_id'),
+                'pet_name': r.get('pet_name') or 'Unknown',
+                'pet_type': r.get('species') or '',
+                'breed': r.get('breed') or '',
+                'location': r.get('location') or '',
+                'description': r.get('description') or '',
+                'photo_url': r.get('photo') or '',
+                'report_type': r.get('type') or '',
+                'reporter_name': r.get('owner_name') or r.get('reporter_name') or 'Unknown',
+                'event_date': r.get('created_at') or '',
+                'reward': r.get('reward') or '',
+                'contact_info': r.get('contact_info') or '',
+            })
+
+        return render_template("lost_found.html", reports=reports)
 
     @login_required
     def mark_as_found(self, report_id):
         user_id = session.get("user_id")
         LostFound.mark_as_found(report_id, user_id)
-        flash("Pet marked as found!", "success")
+        flash("Report marked as resolved!", "success")
         return redirect(url_for("lost_found.view_lost"))

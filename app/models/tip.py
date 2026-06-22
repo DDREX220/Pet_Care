@@ -27,13 +27,27 @@ class Tip:
 
     @staticmethod
     def search(keyword):
-        """US17 - Search tips by keyword."""
+        """US17 - Search tips by keyword in title or content."""
         db = Database()
         results = db.fetch_all(
             """SELECT id, title, category
                FROM tips
                WHERE title LIKE %s OR content LIKE %s""",
             (f"%{keyword}%", f"%{keyword}%")
+        )
+        db.close()
+        return results
+
+    @staticmethod
+    def get_by_category(category):
+        """Get all tips filtered by category."""
+        db = Database()
+        results = db.fetch_all(
+            """SELECT id, title, category, created_at
+               FROM tips
+               WHERE category = %s
+               ORDER BY created_at DESC""",
+            (category,)
         )
         db.close()
         return results

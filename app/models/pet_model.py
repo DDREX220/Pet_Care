@@ -11,6 +11,25 @@ class Pet:
         self.gender = gender
         self.photo = photo
 
+    @staticmethod
+    def validate(name, species, age):
+        """Validate pet input. Returns an error message, or None if valid."""
+        if not name or not name.strip():
+            return "Pet name is required."
+
+        if not species or not species.strip():
+            return "Species is required."
+
+        if age is not None:
+            try:
+                age_val = int(age)
+                if age_val < 0:
+                    return "Age cannot be negative."
+            except (ValueError, TypeError):
+                return "Age must be a number."
+
+        return None    
+
     def save(self):
         db = Database()
         db.execute(
